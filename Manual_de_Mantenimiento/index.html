@@ -2,29 +2,24 @@
 <html lang="es">
 <!--
   index.html — la estructura de la página y los textos que no cambian.
-
   Cómo se conecta con los otros dos archivos:
     css/styles.css -> con <link rel="stylesheet"> (en el <head>). Pone el diseño.
     js/app.js      -> con <script src defer> (en el <head>). Dibuja los pasos y las fallas.
-  Con el CSS se hablan por las CLASES (class="card", class="bar"...).
-  Con el JS se hablan por los IDs (id="pre", id="fix"...) y por los
-  atributos data-* de los botones.
 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plano de mantenimiento de un computador</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>">
-<!-- Las letras (Archivo y Space Mono) vienen de Google Fonts y se usan en styles.css -->
+
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<!-- Aquí se conecta la hoja de estilos. Si borras esta línea, la página se ve sin diseño -->
+
 <link rel="stylesheet" href="css/styles.css">
-<!-- Aquí se conecta la lógica. "defer" significa "espera a que el HTML esté listo":
-     así los id (pre, fix, syms, count) ya existen cuando el JS los busca -->
+
 <script src="js/app.js" defer></script>
 </head>
 <body>
-<!-- ===== PORTADA: título, dibujo y cajetín (el cajetín es el recuadro con los datos del creador que llevan los planos técnicos) ===== -->
+
 <header class="hero" id="inicio">
   <div class="hero-main">
     <div>
@@ -32,16 +27,14 @@
       <p class="sub">Casi ningún equipo se daña de golpe: antes avisa con ruido, calor o lentitud. Este plano te enseña a escucharlo, a limpiarlo con seguridad y a diagnosticarlo con las herramientas que ya trae Windows.</p>
       <a class="btn" href="#conceptos">Abrir el plano</a>
     </div>
-    <!-- Este dibujo es un SVG: una imagen hecha con código, no un archivo aparte.
-         <rect> es un rectángulo, <circle> un círculo, <path> son líneas y <text> es texto.
-         El azul claro (9CC3FF) y el amarillo (FFD84D) son los colores del plano. -->
+
     <svg viewBox="0 0 400 260" role="img" aria-label="Dibujo técnico de una PC de escritorio, un monitor y una laptop">
       <g fill="none" stroke="#9CC3FF" stroke-width="2">
         <rect x="20" y="30" width="90" height="200" rx="3"/><rect x="34" y="46" width="62" height="12"/><circle cx="65" cy="196" r="9"/><path d="M34 80h62M34 92h62M34 104h62"/>
         <rect x="140" y="30" width="150" height="100" rx="3"/><path d="M215 130v16M190 146h50"/>
         <rect x="250" y="160" width="110" height="66" rx="3"/><path d="M235 226h140l-10 14H245z"/>
       </g>
-      <g stroke="#FFD84D" stroke-width="1.5" stroke-dasharray="5 4" fill="none"><path d="M10 30v200M5 30h10M5 230h10"/></g>
+      <g stroke="#FFD84D" stroke-width="1.5" fill="none"><path d="M10 30v200M5 30h10M5 230h10"/></g>
     </svg>
   </div>
   <dl class="cajetin">
@@ -50,19 +43,13 @@
   </dl>
 </header>
 
-<!-- ===== BARRA DE NAVEGACIÓN. Se queda pegada arriba mientras bajas (en el CSS: position:sticky).
-     Los enlaces href="#conceptos" te llevan a la sección que tenga ese id.
-     Los dos botones de .tog traen data-dev="pc" y data-dev="lap": cuando haces clic,
-     el JS lee ese dato para saber qué equipo mostrar. El botón activo lleva
-     aria-pressed="true" y el CSS lo pinta de amarillo. ===== -->
 <nav class="bar" aria-label="Navegación">
   <div class="links"><a href="#conceptos">Conceptos</a><a href="#preventivo">Preventivo</a><a href="#correctivo">Correctivo</a><a href="#cuando">Calendario</a><a href="#fuentes">Fuentes</a></div>
   <div class="tog" role="group" aria-label="Equipo"><button data-dev="pc" aria-pressed="true">PC de escritorio</button><button data-dev="lap" aria-pressed="false">Laptop</button></div>
 </nav>
 
 <main>
-<!-- ===== SECCIÓN 00: contenido FIJO, escrito directamente aquí (el JS no lo toca).
-     .grid acomoda las 4 tarjetas (.card) en 2 columnas. ===== -->
+
 <section id="conceptos">
   <h2><span class="mono">00</span> Antes de empezar</h2>
   <div class="grid">
@@ -73,8 +60,6 @@
   </div>
 </section>
 
-<!-- ===== SECCIÓN 01: contenido DINÁMICO. Aquí el HTML solo deja los huecos:
-     <p id="count"> y <ol id="pre"> empiezan vacíos y app.js (renderPre) los llena. ===== -->
 <section id="preventivo">
   <h2><span class="mono">01</span> Ruta de mantenimiento preventivo</h2>
   <p class="intro">Sigue los nodos en orden. Cada paso explica qué haces y qué estás cuidando. Cuando termines uno, toca su círculo para marcarlo: tu avance se guarda en este navegador.</p>
@@ -82,17 +67,13 @@
   <ol class="trace" id="pre"></ol>
 </section>
 
-<!-- ===== SECCIÓN 02: también dinámica. app.js (renderCor) llena <div id="syms">
-     con los botones de síntomas y <article id="fix"> con la solución del que elijas.
-     aria-live="polite" le avisa a los lectores de pantalla cuando el texto cambia. ===== -->
+
 <section id="correctivo">
   <h2><span class="mono">02</span> Diagnóstico de fallas</h2>
   <p class="intro">Elige el síntoma. Verás qué puede estar pasando, cómo comprobarlo y arreglarlo y, en varios casos, qué ocurre por dentro del sistema.</p>
   <div class="diag"><div class="syms" id="syms"></div><article class="card fix" id="fix" aria-live="polite"></article></div>
 </section>
 
-<!-- ===== SECCIÓN 03: el ritmo de mantenimiento. Contenido fijo. El CSS (.route) lo
-     muestra en 5 columnas, y en celular en 2 o en 1 ===== -->
 <section id="cuando">
   <h2><span class="mono">03</span> Un ritmo realista</h2>
   <p class="intro">Nadie hace todo, todos los días. Poco y seguido funciona mejor que una limpieza heroica una vez al año.</p>
@@ -104,10 +85,7 @@
     <li><b>PC: cuando lo pidan las temperaturas</b>Renovar la pasta térmica del procesador; suele pasar después de varios años.</li>
   </ol>
 </section>
-<!-- ===== SECCIÓN 04: fuentes. Contenido fijo (el JS no la toca). Cada fuente es un
-     enlace <a>: target="_blank" lo abre en otra pestaña y rel="noopener" es una
-     medida de seguridad para esos enlaces. El CSS (.src) le da el estilo.
-     Solo se listan páginas que se revisaron. ===== -->
+
 <section id="fuentes">
   <h2><span class="mono">04</span> Fuentes consultadas</h2>
   <p class="intro">Páginas de referencia en las que se apoyan varias recomendaciones de este manual. Consultadas el 13 de noviembre de 2026.</p>
