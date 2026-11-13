@@ -1,39 +1,39 @@
 <!DOCTYPE html>
 <html lang="es">
 <!--
-  index.html - ESTRUCTURA de la página (los textos que no cambian).
-  Se conecta con los otros dos archivos así:
-    css/styles.css -> <link rel="stylesheet"> (en el <head>): da el aspecto.
-    js/app.js      -> <script src defer> (en el <head>): dibuja los pasos y fallas.
-  El HTML y el CSS se conectan por las CLASES (class="card", class="bar"...).
-  El HTML y el JS se conectan por los IDs (id="pre", id="fix"...) y por los
+  index.html — la estructura de la página y los textos que no cambian.
+
+  Cómo se conecta con los otros dos archivos:
+    css/styles.css -> con <link rel="stylesheet"> (en el <head>). Pone el diseño.
+    js/app.js      -> con <script src defer> (en el <head>). Dibuja los pasos y las fallas.
+  Con el CSS se hablan por las CLASES (class="card", class="bar"...).
+  Con el JS se hablan por los IDs (id="pre", id="fix"...) y por los
   atributos data-* de los botones.
 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plano de mantenimiento de un computador</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>">
-<!-- Tipografías (Archivo y Space Mono) descargadas de Google Fonts; usadas en styles.css -->
+<!-- Las letras (Archivo y Space Mono) vienen de Google Fonts y se usan en styles.css -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<!-- Enlace a la hoja de estilos: sin esta línea la página saldría sin diseño -->
+<!-- Aquí se conecta la hoja de estilos. Si borras esta línea, la página se ve sin diseño -->
 <link rel="stylesheet" href="css/styles.css">
-<!-- Enlace a la lógica. "defer" = se ejecuta cuando el HTML ya cargó, así los
-     id (pre, fix, syms, count) ya existen cuando el JS los busca -->
+<!-- Aquí se conecta la lógica. "defer" significa "espera a que el HTML esté listo":
+     así los id (pre, fix, syms, count) ya existen cuando el JS los busca -->
 <script src="js/app.js" defer></script>
 </head>
 <body>
-<!-- ===== PORTADA: título, dibujo y cajetín (los cajetines son los recuadros con datos que llevan los planos técnicos) ===== -->
+<!-- ===== PORTADA: título, dibujo y cajetín (el cajetín es el recuadro con los datos del creador que llevan los planos técnicos) ===== -->
 <header class="hero" id="inicio">
   <div class="hero-main">
     <div>
-      <h1>Mantenimiento preventivo y correctivo de un <em>computador</em></h1>
-      <p class="sub">Un manual dibujado como plano técnico: sigue la ruta, marca cada paso y encuentra la solución a la falla de tu PC de escritorio o laptop.</p>
+      <h1>Mantenimiento preventivo y correctivo: conoce tu <em>computador</em> por dentro</h1>
+      <p class="sub">Casi ningún equipo se daña de golpe: antes avisa con ruido, calor o lentitud. Este plano te enseña a escucharlo, a limpiarlo con seguridad y a diagnosticarlo con las herramientas que ya trae Windows.</p>
       <a class="btn" href="#conceptos">Abrir el plano</a>
     </div>
-    <!-- Dibujo en SVG (gráfico vectorial escrito con código, no es una imagen aparte).
-         <rect> = rectángulo, <circle> = círculo, <path> = líneas, <text> = texto.
-         Los colores 9CC3FF (azul claro) y FFD84D (amarillo) son los del plano. -->
+    <!-- Este dibujo es un SVG: una imagen hecha con código, no un archivo aparte.
+         <rect> es un rectángulo, <circle> un círculo, <path> son líneas y <text> es texto.
+         El azul claro (9CC3FF) y el amarillo (FFD84D) son los colores del plano. -->
     <svg viewBox="0 0 400 260" role="img" aria-label="Dibujo técnico de una PC de escritorio, un monitor y una laptop">
       <g fill="none" stroke="#9CC3FF" stroke-width="2">
         <rect x="20" y="30" width="90" height="200" rx="3"/><rect x="34" y="46" width="62" height="12"/><circle cx="65" cy="196" r="9"/><path d="M34 80h62M34 92h62M34 104h62"/>
@@ -41,81 +41,90 @@
         <rect x="250" y="160" width="110" height="66" rx="3"/><path d="M235 226h140l-10 14H245z"/>
       </g>
       <g stroke="#FFD84D" stroke-width="1.5" stroke-dasharray="5 4" fill="none"><path d="M10 30v200M5 30h10M5 230h10"/></g>
-      <text x="125" y="250" fill="#FFD84D" font-family="Space Mono,monospace" font-size="12">80 °C máx.</text>
+      <text x="125" y="250" fill="#FFD84D" font-family="Space Mono,monospace" font-size="12">aire frío → aire caliente</text>
     </svg>
   </div>
   <dl class="cajetin">
-    <div><dt>Creador</dt><dd>Julián Díaz</dd></div>
-    <div><dt>Documento</dt><dd>Manual para PC y laptop</dd></div>
+    <div><dt>Creador</dt><dd>Julián Enrique Díaz Palmera</dd></div>
+    <div><dt>Documento</dt><dd>Manual técnico para PC y laptop</dd></div>
   </dl>
 </header>
 
-<!-- ===== BARRA DE NAVEGACIÓN (queda fija arriba al bajar: position:sticky en el CSS) =====
-     Los enlaces href="#conceptos" saltan a la sección con ese id.
-     Los dos botones de .tog tienen data-dev="pc" / "lap": el JS los lee al hacer clic
-     para saber qué equipo mostrar. aria-pressed="true" marca el activo (el CSS lo pinta amarillo). -->
+<!-- ===== BARRA DE NAVEGACIÓN. Se queda pegada arriba mientras bajas (en el CSS: position:sticky).
+     Los enlaces href="#conceptos" te llevan a la sección que tenga ese id.
+     Los dos botones de .tog traen data-dev="pc" y data-dev="lap": cuando haces clic,
+     el JS lee ese dato para saber qué equipo mostrar. El botón activo lleva
+     aria-pressed="true" y el CSS lo pinta de amarillo. ===== -->
 <nav class="bar" aria-label="Navegación">
   <div class="links"><a href="#conceptos">Conceptos</a><a href="#preventivo">Preventivo</a><a href="#correctivo">Correctivo</a><a href="#cuando">Calendario</a><a href="#fuentes">Fuentes</a></div>
   <div class="tog" role="group" aria-label="Equipo"><button data-dev="pc" aria-pressed="true">PC de escritorio</button><button data-dev="lap" aria-pressed="false">Laptop</button></div>
 </nav>
 
 <main>
-<!-- ===== contenido FIJO escrito directamente en el HTML (no lo toca el JS).
+<!-- ===== SECCIÓN 00: contenido FIJO, escrito directamente aquí (el JS no lo toca).
      .grid acomoda las 4 tarjetas (.card) en 2 columnas. ===== -->
 <section id="conceptos">
   <h2><span class="mono">00</span> Antes de empezar</h2>
   <div class="grid">
-    <div class="card"><h4>Preventivo</h4><p>Cuidados que se repiten con regularidad para que el equipo no falle. <b>Ejemplo:</b> limpiar el polvo de los ventiladores cada 3 meses.</p></div>
-    <div class="card"><h4>Correctivo</h4><p>Reparación que se hace cuando ya apareció la falla. <b>Ejemplo:</b> cambiar un ventilador que dejó de girar.</p></div>
-    <div class="card"><h4>Herramientas</h4><ul><li>Destornillador Phillips y uno de precisión</li><li>Aire comprimido y brocha antiestática</li><li>Alcohol isopropílico al 70 % y paño de microfibra</li><li>Hisopos, palitos de madera y linterna</li></ul></div>
-    <div class="card"><h4>Seguridad</h4><ul><li>Apaga y desconecta antes de abrir o limpiar.</li><li>Toca metal del gabinete para descargar la estática.</li><li>El líquido va al paño, nunca al equipo.</li><li>Nada de aspiradoras ni secadores de pelo.</li></ul></div>
+    <div class="card"><h4>Dos formas de cuidar</h4><p><b>Preventivo:</b> lo haces cuando todo funciona, para que siga así. Ejemplo: sacar el polvo de los ventiladores cada trimestre.</p><p><b>Correctivo:</b> lo haces cuando ya hay un síntoma, y empieza por diagnosticar, no por cambiar piezas. Ejemplo: antes de comprar otra fuente de poder, comprobar si de verdad es la fuente.</p></div>
+    <div class="card"><h4>El método de diagnóstico</h4><ol><li>Observa y anota qué pasa y cuándo pasa.</li><li>Aísla: desconecta lo que no sea indispensable.</li><li>Cambia una sola cosa a la vez.</li><li>Comprueba si el síntoma desapareció y anota qué funcionó.</li></ol></div>
+    <div class="card"><h4>Qué vas a necesitar</h4><ul><li>Destornilladores Phillips (grande y de precisión)</li><li>Aire comprimido y brocha antiestática</li><li>Alcohol isopropílico al 70 % y paño de microfibra</li><li>Linterna, hisopos y un recipiente para los tornillos</li><li>Tu celular, para fotografiar los cables antes de desconectarlos</li></ul></div>
+    <div class="card"><h4>Reglas de seguridad</h4><ul><li>Apaga y desconecta antes de abrir o limpiar.</li><li>Toca metal del gabinete para descargar la estática.</li><li>El líquido va al paño, nunca al equipo.</li><li>Nada de aspiradoras ni secadores de pelo.</li><li>Si huele a quemado o ves cables pelados, detente y llama a un técnico.</li></ul></div>
   </div>
 </section>
 
-<!-- =====  contenido DINÁMICO. Aquí el HTML solo deja los "huecos":
-     <p id="count"> y <ol id="pre"> están vacíos y app.js (renderPre) los llena. ===== -->
+<!-- ===== SECCIÓN 01: contenido DINÁMICO. Aquí el HTML solo deja los huecos:
+     <p id="count"> y <ol id="pre"> empiezan vacíos y app.js (renderPre) los llena. ===== -->
 <section id="preventivo">
   <h2><span class="mono">01</span> Ruta de mantenimiento preventivo</h2>
-  <p class="intro">Sigue los nodos en orden. Cuando termines un paso, toca su círculo para marcarlo.</p>
+  <p class="intro">Sigue los nodos en orden. Cada paso explica qué haces y qué estás cuidando. Cuando termines uno, toca su círculo para marcarlo: tu avance se guarda en este navegador.</p>
   <p class="mono count" id="count" aria-live="polite"></p>
   <ol class="trace" id="pre"></ol>
 </section>
 
-<!-- ===== también dinámica. app.js (renderCor) llena <div id="syms">
-     con los botones de fallas y <article id="fix"> con la solución elegida.
-     aria-live="polite" avisa a los lectores de pantalla cuando el contenido cambia. ===== -->
+<!-- ===== SECCIÓN 02: también dinámica. app.js (renderCor) llena <div id="syms">
+     con los botones de síntomas y <article id="fix"> con la solución del que elijas.
+     aria-live="polite" le avisa a los lectores de pantalla cuando el texto cambia. ===== -->
 <section id="correctivo">
   <h2><span class="mono">02</span> Diagnóstico de fallas</h2>
-  <p class="intro">Elige lo que le pasa a tu equipo y verás por qué ocurre y cómo arreglarlo.</p>
+  <p class="intro">Elige el síntoma. Verás qué puede estar pasando, cómo comprobarlo y arreglarlo y, en varios casos, qué ocurre por dentro del sistema.</p>
   <div class="diag"><div class="syms" id="syms"></div><article class="card fix" id="fix" aria-live="polite"></article></div>
 </section>
 
-<!-- ===== SECCIÓN 03: calendario. Contenido fijo; el CSS (.route) lo muestra
-     en 5 columnas, y en celular en 2 o en 1 ===== -->
+<!-- ===== SECCIÓN 03: el ritmo de mantenimiento. Contenido fijo. El CSS (.route) lo
+     muestra en 5 columnas, y en celular en 2 o en 1 ===== -->
 <section id="cuando">
-  <h2><span class="mono">03</span> Calendario de mantenimiento</h2>
+  <h2><span class="mono">03</span> Un ritmo realista</h2>
+  <p class="intro">Nadie hace todo, todos los días. Poco y seguido funciona mejor que una limpieza heroica una vez al año.</p>
   <ol class="route">
-    <li><b>Cada semana</b>Actualizar, pasar el antivirus y borrar temporales.</li>
-    <li><b>Cada mes</b>Limpieza exterior y copia de seguridad.</li>
-    <li><b>3 a 6 meses</b>Quitar el polvo: dentro de la PC o por las rejillas de la laptop.</li>
-    <li><b>1 a 2 años</b>Laptop: limpiar el ventilador y renovar la pasta térmica.</li>
-    <li><b>2 a 3 años</b>PC: renovar la pasta térmica del procesador.</li>
+    <li><b>Cada semana</b>Actualizar, pasar el antivirus y echar un vistazo al Administrador de tareas: ¿algo raro?</li>
+    <li><b>Cada mes</b>Limpieza exterior, copia de seguridad (3-2-1) y revisión de la salud del disco.</li>
+    <li><b>Cada 3 a 6 meses</b>Quitar el polvo, comparar las temperaturas con tu línea base y, en la laptop, generar el informe de batería.</li>
+    <li><b>Laptop: 1 a 2 años</b>Limpieza profunda del ventilador y el disipador y, si hace falta, pasta térmica nueva.</li>
+    <li><b>PC: cuando lo pidan las temperaturas</b>Renovar la pasta térmica del procesador; suele pasar después de varios años.</li>
   </ol>
 </section>
-<!-- ===== Contenido fijo . Cada fuente es un enlace <a>;
-     target="_blank" lo abre en otra pestaña y rel="noopener" es una medida de seguridad para
-     esos enlaces. El CSS (.src) le da el estilo. ===== -->
+<!-- ===== SECCIÓN 04: fuentes. Contenido fijo (el JS no la toca). Cada fuente es un
+     enlace <a>: target="_blank" lo abre en otra pestaña y rel="noopener" es una
+     medida de seguridad para esos enlaces. El CSS (.src) le da el estilo.
+     Solo se listan páginas que se revisaron. ===== -->
 <section id="fuentes">
   <h2><span class="mono">04</span> Fuentes consultadas</h2>
   <p class="intro">Páginas de referencia en las que se apoyan varias recomendaciones de este manual. Consultadas el 13 de noviembre de 2026.</p>
   <ol class="src">
-    <li><a href="https://www.dell.com/support/kbdoc/en-us/000124077" target="_blank" rel="noopener">Dell Technologies. <em>How to Clean and Maintain Your Dell Computer.</em></a><span>Apagar y desconectar antes de limpiar, aire comprimido, paño humedecido con alcohol isopropílico al 70 % y no rociar líquido sobre el equipo.</span></li>
+    <li><a href="https://www.dell.com/support/kbdoc/en-us/000124077" target="_blank" rel="noopener">Dell Technologies. <em>How to Clean and Maintain Your Dell Computer.</em></a><span>Apagar y desconectar antes de limpiar, aire comprimido, no usar aspiradora (estática), paño humedecido con alcohol isopropílico al 70 % y no rociar líquido sobre el equipo.</span></li>
     <li><a href="https://support.microsoft.com/windows/caring-for-your-battery-in-windows-2db3e37f-5e7d-488e-9086-ed15320519e4" target="_blank" rel="noopener">Microsoft Support. <em>Caring for your battery in Windows.</em></a><span>Evitar el calor, mantener la carga entre 20 % y 80 % y generar el informe de batería con <code>powercfg /batteryreport</code>.</span></li>
     <li><a href="https://batteryuniversity.com/article/bu-808-how-to-prolong-lithium-based-batteries" target="_blank" rel="noopener">Battery University. <em>BU-808: How to Prolong Lithium-based Batteries.</em></a><span>El calor reduce de forma permanente la capacidad de las baterías de litio, y las cargas y descargas parciales las hacen durar más.</span></li>
-    <li><a href="https://support.microsoft.com/kb/929833" target="_blank" rel="noopener">Microsoft Support. <em>Use the System File Checker tool to repair missing or corrupted system files.</em></a><span>Uso de <code>sfc /scannow</code> desde el Símbolo del sistema como administrador.</span></li>
+    <li><a href="https://support.microsoft.com/kb/929833" target="_blank" rel="noopener">Microsoft Support. <em>Use the System File Checker tool to repair missing or corrupted system files.</em></a><span>Uso de DISM y de <code>sfc /scannow</code> desde el Símbolo del sistema como administrador.</span></li>
+    <li><a href="https://learn.microsoft.com/en-us/archive/technet-wiki/14246.kernel-power-event-id-41" target="_blank" rel="noopener">Microsoft Learn (TechNet Wiki). <em>Kernel Power Event ID 41.</em></a><span>Qué significa el evento 41: el sistema se reinició sin un apagado limpio, y sus posibles causas (calor, fuente, memoria, controladores, corte de energía).</span></li>
+    <li><a href="https://support.microsoft.com/en-us/windows/experience/performance-optimization/how-to-fix-error-0xa-irql-not-less-or-equal" target="_blank" rel="noopener">Microsoft Support. <em>How to fix Error 0xA: IRQL_NOT_LESS_OR_EQUAL.</em></a><span>Qué es un error de detención (pantalla azul), actualización de controladores y uso de <code>mdsched</code> para probar la memoria.</span></li>
+    <li><a href="https://learn.microsoft.com/en-us/powershell/module/storage/get-physicaldisk" target="_blank" rel="noopener">Microsoft Learn. <em>Get-PhysicalDisk.</em></a><span>Consulta del estado de salud (<code>HealthStatus</code>) de los discos desde PowerShell.</span></li>
+    <li><a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/install/cm-prob-failed-post-start" target="_blank" rel="noopener">Microsoft Learn. <em>Code 43 - CM_PROB_FAILED_POST_START.</em></a><span>Qué significa el Código 43 del Administrador de dispositivos y por qué Windows detiene el dispositivo.</span></li>
+    <li><a href="https://support.microsoft.com/help/12376" target="_blank" rel="noopener">Microsoft Support. <em>Windows startup settings.</em></a><span>Entorno de recuperación de Windows: Solucionar problemas > Opciones avanzadas > Configuración de inicio y Modo seguro.</span></li>
+    <li><a href="https://uschamber.com/co/run/technology/3-2-1-backup-rule" target="_blank" rel="noopener">U.S. Chamber of Commerce. <em>3-2-1 Backup Rule.</em></a><span>Tres copias de los datos, en dos tipos de medios distintos y una fuera del lugar principal.</span></li>
   </ol>
 </section>
 </main>
-<footer><span class="mono" <span> · Creador: Julián Díaz</footer>
+<footer><span class="mono">Creador</span>: Julián Enrique Díaz Palmera</footer>
 </body>
 </html>
