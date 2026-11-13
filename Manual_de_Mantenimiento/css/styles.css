@@ -1,60 +1,35 @@
-/* =====================================================================
-   styles.css — cómo se ve la página (estilo "plano técnico")
 
-   Cómo se conecta: index.html lo carga con <link rel="stylesheet">.
-   Cada regla empieza con un SELECTOR que dice a qué elementos se aplica:
-     .nombre  -> los elementos con class="nombre" (por ejemplo .card, .bar, .dot)
-     #nombre  -> el elemento con id="nombre"
-     etiqueta -> todas las etiquetas de ese tipo (body, h2, footer...)
-   Algunas clases (.dot, .sym, .card, .how, .tip) también las usa app.js
-   cuando dibuja los pasos y las fallas, y por eso lo dibujado ya sale con estilo.
-   Los cambios de color de los botones (el activo en amarillo, el paso hecho
-   en verde) vienen del atributo aria-pressed="true", que app.js enciende
-   y apaga con cada clic.
-   ===================================================================== */
-
-/* LOS COLORES: son variables CSS (--nombre) y se usan con var(--nombre).
-   Si quieres cambiar un color de toda la página, lo cambias solo aquí:
-   bp = azul de fondo (blueprint = plano), line = azul claro de las líneas,
-   ink = color del texto, mut = texto más apagado, yel = amarillo para
-   destacar, ok = verde de "hecho" */
 :root{--bp:#0B2F7A;--line:#9CC3FF;--ink:#EEF4FF;--mut:#BBD3FF;--yel:#FFD84D;--ok:#7CF0B5}
-/* Hace que el ancho incluya el relleno y el borde; así los tamaños son más fáciles de calcular */
+
 *{box-sizing:border-box}
-/* Hace que al tocar los enlaces de la barra la página se deslice suave.
-   scroll-padding-top deja espacio para que la barra fija no tape el título. */
+
 html{scroll-behavior:smooth;scroll-padding-top:4.5rem}
-/* Si en tu sistema pediste menos animaciones, se quita el deslizamiento suave */
+
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-/* EL FONDO CUADRICULADO: son 4 degradados de líneas encimados que forman la
-   cuadrícula del plano (finas cada 24px y gruesas cada 120px, en vertical y horizontal) */
+
 body{margin:0;color:var(--ink);background-color:var(--bp);font:400 1.05rem/1.6 Archivo,system-ui,sans-serif;
 background-image:linear-gradient(rgba(156,195,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(156,195,255,.1) 1px,transparent 1px),linear-gradient(rgba(156,195,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(156,195,255,.18) 1px,transparent 1px);
 background-size:24px 24px,24px 24px,120px 120px,120px 120px}
-/* Cuando navegas con el teclado (Tab), un contorno amarillo te muestra dónde estás */
 :focus-visible{outline:3px solid var(--yel);outline-offset:3px}
 h1,h2,h3,h4{margin:0;line-height:1.15}
-/* .mono: una clase para el texto con letra de máquina de escribir (Space Mono) */
 .mono{font-family:"Space Mono",monospace}
-/* LA PORTADA (<header class="hero">): ocupa toda la pantalla (100svh).
-   .hero-main pone el texto a la izquierda y el dibujo a la derecha, en 2 columnas con grid */
+
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;gap:2rem;padding:clamp(1.2rem,5vw,3.5rem)}
 .hero-main{display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;align-items:center;margin:auto 0}
 h1{font-weight:800;font-size:clamp(2.2rem,6vw,4.3rem);letter-spacing:-.02em}
 h1 em{font-style:normal;color:var(--yel)}
 .sub{color:var(--mut);font-size:1.2rem;max-width:34rem;margin:1.2rem 0 1.8rem}
-/* El botón "Abrir el plano" (<a class="btn">). Al pasar el mouse (:hover) se invierte de color */
+
 .btn{display:inline-block;background:var(--yel);color:var(--bp);font-weight:800;text-decoration:none;padding:.8rem 1.5rem;border:2px solid var(--yel)}
 .btn:hover{background:transparent;color:var(--yel)}
 svg{width:100%;height:auto}
-/* EL CAJETÍN: el recuadro de 2 celdas (Creador y Documento) al pie de la portada */
+
 .cajetin{display:grid;grid-template-columns:repeat(2,1fr);margin:0;border:2px solid var(--line);background:var(--bp)}
 .cajetin div{padding:.7rem 1rem;border-right:2px solid var(--line)}
 .cajetin div:last-child{border:0}
 dt{font:400 .8rem "Space Mono",monospace;color:var(--mut)}
 dd{margin:0;font-weight:800;font-size:1.15rem}
-/* LA BARRA DE NAVEGACIÓN: position:sticky la deja pegada arriba al bajar.
-   .links son los enlaces y .tog los botones PC/Laptop (el activo es el de aria-pressed="true") */
+
 .bar{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:.5rem 1rem;flex-wrap:wrap;background:var(--bp);border-block:2px solid var(--line);padding:.5rem clamp(1rem,4vw,3rem)}
 .links{display:flex;gap:1rem;flex-wrap:wrap}
 .links a{color:var(--ink);text-decoration:none;font:700 .9rem "Space Mono",monospace;padding:.4rem 0}
@@ -62,21 +37,18 @@ dd{margin:0;font-weight:800;font-size:1.15rem}
 .tog button{font:700 .9rem "Space Mono",monospace;background:none;color:var(--ink);border:2px solid var(--line);padding:.45rem .9rem;cursor:pointer}
 .tog button+button{border-left:0}
 .tog button[aria-pressed="true"]{background:var(--yel);color:var(--bp);border-color:var(--yel)}
-/* El contenido principal: centrado y con un ancho máximo de 64rem */
+
 main{max-width:64rem;margin:0 auto;padding:0 clamp(1rem,4vw,2rem) 4rem}
 section{padding-top:4rem}
 h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:.6rem}
 h2 .mono{color:var(--yel);font-size:.6em;border:2px solid var(--yel);padding:.1rem .45rem;margin-right:.5rem;vertical-align:.25em}
 .intro{color:var(--mut);max-width:40rem;margin:0 0 1rem}
-/* SECCIÓN 00: .grid pone las tarjetas en 2 columnas y .card es cada tarjeta,
-   con borde punteado (como las líneas de corte de un plano) */
+
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.2rem}
 .card{border:2px dashed var(--line);background:rgba(11,47,122,.85);padding:1.1rem 1.3rem}
 .card h4{color:var(--yel);margin-bottom:.4rem;font-size:1.2rem}
 .card ul,.card ol{margin:.3rem 0 0;padding-left:1.2rem}
-/* SECCIÓN 01, LA RUTA: .count es el contador verde. .trace es la lista con una
-   línea vertical (la dibuja ::before). .dot es el círculo numerado que se apoya
-   sobre esa línea; cuando el JS le pone aria-pressed="true", se pinta de verde */
+
 .count{color:var(--ok);font-weight:700;margin:.3rem 0 1.2rem}
 .trace{list-style:none;margin:0;padding:0 0 0 3.4rem;position:relative}
 .trace::before{content:"";position:absolute;left:1.1rem;top:1rem;bottom:1rem;border-left:3px solid var(--line)}
@@ -89,8 +61,7 @@ h2 .mono{color:var(--yel);font-size:.6em;border:2px solid var(--yel);padding:.1r
 .how ol{margin:.3rem 0 0;padding-left:1.2rem}
 .how li{margin:.3rem 0}
 .tip{font:400 .92rem "Space Mono",monospace;color:var(--yel);margin:.8rem 0 0}
-/* SECCIÓN 02, EL DIAGNÓSTICO: .diag son 2 columnas (los botones .syms a la izquierda
-   y la tarjeta .fix a la derecha). .sym es cada botón de síntoma, amarillo si es el elegido */
+
 .diag{display:grid;grid-template-columns:19rem 1fr;gap:1rem;align-items:start}
 .syms{display:grid;gap:.4rem}
 .sym{text-align:left;font:600 1rem Archivo,sans-serif;color:var(--ink);background:none;border:2px solid var(--line);padding:.7rem .9rem;cursor:pointer}
@@ -99,14 +70,12 @@ h2 .mono{color:var(--yel);font-size:.6em;border:2px solid var(--yel);padding:.1r
 .fix dl{margin:.5rem 0 0}
 .fix dt{color:var(--yel);margin-top:.7rem}
 .fix dd{margin:0}
-/* SECCIÓN 03, EL RITMO: .route son 5 columnas; cada <li> lleva una línea amarilla arriba */
 .route{list-style:none;margin:1.5rem 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;position:relative}
 .route li{border-top:4px solid var(--yel);padding-top:.8rem;color:var(--mut)}
 .route b{display:block;color:var(--ink);font-family:"Space Mono",monospace}
-/* El pie de página */
+
 footer{border-top:2px solid var(--line);padding:1.5rem;text-align:center;color:var(--mut)}
-/* SECCIÓN 04, LAS FUENTES: .src es una lista numerada de enlaces. Cada <li> trae el enlace
-   y, debajo, un <span> que dice qué respalda esa fuente (display:block lo manda a otra línea) */
+
 .src{margin:1.2rem 0 0;padding-left:1.5rem}
 .src li{margin:0 0 1rem}
 .src a{color:var(--ink);font-weight:600;text-decoration-color:var(--yel);text-underline-offset:3px}
