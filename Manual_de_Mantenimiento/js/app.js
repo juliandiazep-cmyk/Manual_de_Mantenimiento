@@ -1,45 +1,4 @@
-/* =====================================================================
-   app.js — aquí viven los datos y la lógica de la página
 
-   Cómo se conecta con los otros dos archivos:
-   - index.html carga este archivo con <script src="js/app.js" defer>.
-     El "defer" hace que se ejecute cuando el HTML ya está listo, así los
-     lugares que busco aquí (los id) ya existen.
-   - Los pasos y las fallas NO están escritos en el HTML. Los guardo aquí,
-     en la variable D, y los dibujo dentro de cuatro "huecos" que el HTML
-     deja vacíos y que se reconocen por su id:
-       id="count" -> el contador de pasos hechos
-       id="pre"   -> la ruta de pasos preventivos
-       id="syms"  -> los botones con los síntomas
-       id="fix"   -> la tarjeta con la solución del síntoma elegido
-   - Las clases que uso al dibujar (card, how, tip, dot, sym) están
-     definidas en css/styles.css. Por eso lo que dibujo ya sale con estilo.
-   ===================================================================== */
-
-/* ---------- 1. LOS DATOS ----------
-   D es como un libro con cuatro capítulos. Cada capítulo es una lista y su
-   nombre se arma con equipo + tipo (por eso, más abajo, D[st.dev+"Pre"]
-   da D.pcPre o D.lapPre según el equipo que elijas):
-     pcPre  = PC de escritorio, pasos preventivos
-     pcCor  = PC de escritorio, fallas (correctivo)
-     lapPre = Laptop, pasos preventivos
-     lapCor = Laptop, fallas (correctivo)
-
-   Para no escribir tanto, las claves son cortas. En los pasos preventivos:
-     t   = título del paso
-     d   = descripción: el "por qué" del paso
-     h   = "how": la lista de "Cómo hacerlo"
-     tip = consejo extra (opcional: no todos los pasos tienen uno)
-   En las fallas:
-     p = problema (lo que dice el botón)
-     s = síntoma: lo que notas
-     c = causa probable: qué puede estar pasando
-     f = fix: los pasos para comprobarlo y arreglarlo
-     x = "por dentro": qué ocurre en el sistema o en el hardware (opcional)
-
-   ¿Quieres agregar un paso o una falla? Copia un bloque { ... } dentro de
-   la lista que corresponda, ponle una coma y listo: la página lo muestra
-   sola, sin tocar nada más. */
 var D={
 /* PC de escritorio: los pasos de mantenimiento preventivo */
 pcPre:[
@@ -85,99 +44,51 @@ lapCor:[
 ]
 };
 
-/* ---------- 2. LA LÓGICA ---------- */
 
-/* La memoria de la página: lo que necesita recordar mientras está abierta.
-   st.dev = el equipo que elegiste: "pc" o "lap"
-   st.sel = cuál síntoma está seleccionado (0 es el primero de la lista)
-   done   = los pasos que ya marcaste, aparte para cada equipo. Por ejemplo,
-            done.pc = [true, false, true] quiere decir que en la PC marcaste
-            el paso 1 y el 3.
-   done se guarda en el navegador (mira save() más abajo), así que no se
-   pierde cuando recargas. */
 var st={dev:"pc",sel:0},done={pc:[],lap:[]};
 
-/* Guardar tu progreso. localStorage es un cajoncito del navegador donde la
-   página puede dejar datos aunque cierres la pestaña. Solo guarda texto,
-   por eso uso JSON.stringify para convertir "done" en texto al guardar, y
-   JSON.parse para volverlo lista al leer.
-   Todo va dentro de try/catch porque algunos navegadores bloquean ese
-   cajón (por ejemplo, en modo privado). Si pasa, la página sigue
-   funcionando; lo único es que no recuerda tus pasos. */
-var KEY="plano-mantenimiento-progreso";   /* con este nombre se guarda */
+var KEY="plano-mantenimiento-progreso";  
 function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
-/* Al abrir la página: si ya había progreso guardado y tiene la forma
-   esperada (dos listas, pc y lap), se usa en lugar de las listas vacías. */
+
 try{var g=JSON.parse(localStorage.getItem(KEY));if(g&&Array.isArray(g.pc)&&Array.isArray(g.lap))done=g}catch(e){}
 
-/* li(a): le pasas una lista de textos y te devuelve esos textos como
-   elementos de lista HTML. Ejemplo: li(["a","b"]) da "<li>a</li><li>b</li>".
-   .map() recorre la lista y .join("") pega todo en un solo texto. */
 function li(a){return a.map(function(x){return"<li>"+x+"</li>"}).join("")}
 
-/* renderPre(): dibuja la ruta de pasos preventivos (la sección 01 del HTML). */
+
 function renderPre(){
-  /* a = los pasos del equipo actual (D["pc"+"Pre"] es lo mismo que D.pcPre)
-     d = cuáles de esos pasos tienes marcados
-     n = cuántos son (filter(Boolean) se queda solo con los true) */
+
   var a=D[st.dev+"Pre"],d=done[st.dev],n=d.filter(Boolean).length;
-  /* Escribe el contador en <p id="count">, por ejemplo "2 / 8 pasos completados" */
+
   document.getElementById("count").textContent=n+" / "+a.length+" pasos completados";
-  /* Por cada paso armo un <li> con dos cosas: el círculo numerado (.dot) y la
-     tarjeta (.card). Todo se mete dentro de <ol id="pre"> con innerHTML.
-     - data-i guarda el número del paso, así el clic sabe cuál tocaste.
-     - aria-pressed="true/false" dice si el paso está marcado. El CSS lo
-       aprovecha para pintar el círculo de verde.
-     - El consejo (tip) solo se dibuja si el paso trae uno: (s.tip ? ... : ''). */
+
   document.getElementById("pre").innerHTML=a.map(function(s,i){
     return'<li><button class="dot" data-i="'+i+'" aria-pressed="'+!!d[i]+'" aria-label="Marcar el paso '+(i+1)+' como hecho">'+(i+1)+'</button><article class="card"><h4>'+s.t+'</h4><p>'+s.d+'</p><div class="how"><b>Cómo hacerlo</b><ol>'+li(s.h)+'</ol></div>'+(s.tip?'<p class="tip">Ojo: '+s.tip+'</p>':'')+'</article></li>'}).join("");
 }
 
-/* renderCor(): dibuja el diagnóstico de fallas (la sección 02 del HTML). */
 function renderCor(){
-  /* a = las fallas del equipo actual; f = la que está seleccionada (a[st.sel]) */
+
   var a=D[st.dev+"Cor"],f=a[st.sel];
-  /* 1) Los botones de síntomas, dentro de <div id="syms">. El seleccionado
-        lleva aria-pressed="true" y el CSS lo pinta de amarillo. data-k
-        guarda su posición. */
+
   document.getElementById("syms").innerHTML=a.map(function(x,i){return'<button class="sym" data-k="'+i+'" aria-pressed="'+(i===st.sel)+'">'+x.p+'</button>'}).join("");
-  /* 2) La tarjeta de la solución, dentro de <article id="fix">: el título,
-        "Lo que notas", "Qué puede estar pasando" y la lista "Cómo comprobarlo
-        y arreglarlo". Si la falla tiene el campo x, al final se añade el
-        recuadro "Por dentro" (solo si existe: (f.x ? ... : '')). */
+
   document.getElementById("fix").innerHTML='<h4>'+f.p+'</h4><dl><dt>Lo que notas</dt><dd>'+f.s+'</dd><dt>Qué puede estar pasando</dt><dd>'+f.c+'</dd></dl><div class="how"><b>Cómo comprobarlo y arreglarlo</b><ol>'+li(f.f)+'</ol></div>'+(f.x?'<p class="tip">Por dentro: '+f.x+'</p>':'');
 }
 
-/* renderAll(): vuelve a dibujar todo. Se llama al abrir la página y cada
-   vez que cambias de equipo (PC <-> Laptop). */
+
 function renderAll(){
-  /* Primero marca cuál botón PC/Laptop de la barra está activo: el que tenga
-     el mismo data-dev que st.dev queda con aria-pressed="true". */
+
   document.querySelectorAll(".tog button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.dev===st.dev)});
-  renderPre();renderCor();   /* y dibuja las dos secciones que cambian */
+  renderPre();renderCor();  
 }
 
-/* Los clics. En vez de ponerle un oyente a cada botón, escucho todos los
-   clics de la página y miro qué tocaste. Lo hago así porque los botones se
-   vuelven a dibujar cada vez, y un oyente puesto en un botón viejo se
-   perdería (esto se llama delegación de eventos).
-   e.target.closest(selector) busca, desde lo que tocaste hacia afuera, el
-   primer elemento que coincida con el selector. Si no hay ninguno, da null
-   y esa opción se salta. */
 document.addEventListener("click",function(e){
   var t;
-  /* Caso A: tocaste PC o Laptop (tienen data-dev). Cambio de equipo, vuelvo
-     al primer síntoma (sel=0) y redibujo todo. */
+
   if(t=e.target.closest("[data-dev]")){st.dev=t.dataset.dev;st.sel=0;renderAll()}
-  /* Caso B: tocaste el círculo de un paso (.dot). Leo qué número es con
-     data-i (el + lo convierte de texto a número), cambio true por false o
-     al revés, guardo con save() y redibujo la ruta. */
+
   else if(t=e.target.closest(".dot")){var i=+t.dataset.i;done[st.dev][i]=!done[st.dev][i];save();renderPre()}
-  /* Caso C: tocaste un síntoma (.sym). Recuerdo cuál es (data-k) y redibujo
-     solo el diagnóstico. */
+
   else if(t=e.target.closest(".sym")){st.sel=+t.dataset.k;renderCor()}
 });
 
-/* Arranque: dibuja la página por primera vez. Sin esta línea, las
-   secciones 01 y 02 se quedarían vacías. */
 renderAll();
