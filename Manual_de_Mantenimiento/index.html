@@ -45,8 +45,7 @@
     </svg>
   </div>
   <dl class="cajetin">
-    <div><dt>Materia</dt><dd>Sistemas Operativos</dd></div>
-    <div><dt>Autor</dt><dd>Julián Díaz</dd></div>
+    <div><dt>Creador</dt><dd>Julián Díaz</dd></div>
     <div><dt>Documento</dt><dd>Manual para PC y laptop</dd></div>
   </dl>
 </header>
@@ -61,7 +60,7 @@
 </nav>
 
 <main>
-<!-- ===== SECCIÓN 00: contenido FIJO escrito directamente en el HTML (no lo toca el JS).
+<!-- ===== contenido FIJO escrito directamente en el HTML (no lo toca el JS).
      .grid acomoda las 4 tarjetas (.card) en 2 columnas. ===== -->
 <section id="conceptos">
   <h2><span class="mono">00</span> Antes de empezar</h2>
@@ -73,7 +72,7 @@
   </div>
 </section>
 
-<!-- ===== SECCIÓN 01: contenido DINÁMICO. Aquí el HTML solo deja los "huecos":
+<!-- =====  contenido DINÁMICO. Aquí el HTML solo deja los "huecos":
      <p id="count"> y <ol id="pre"> están vacíos y app.js (renderPre) los llena. ===== -->
 <section id="preventivo">
   <h2><span class="mono">01</span> Ruta de mantenimiento preventivo</h2>
@@ -82,7 +81,7 @@
   <ol class="trace" id="pre"></ol>
 </section>
 
-<!-- ===== SECCIÓN 02: también dinámica. app.js (renderCor) llena <div id="syms">
+<!-- ===== también dinámica. app.js (renderCor) llena <div id="syms">
      con los botones de fallas y <article id="fix"> con la solución elegida.
      aria-live="polite" avisa a los lectores de pantalla cuando el contenido cambia. ===== -->
 <section id="correctivo">
@@ -103,9 +102,9 @@
     <li><b>2 a 3 años</b>PC: renovar la pasta térmica del procesador.</li>
   </ol>
 </section>
-<!-- ===== SECCIÓN 04: fuentes. Contenido fijo (el JS no la toca). Cada fuente es un enlace <a>;
+<!-- ===== Contenido fijo . Cada fuente es un enlace <a>;
      target="_blank" lo abre en otra pestaña y rel="noopener" es una medida de seguridad para
-     esos enlaces. El CSS (.src) le da el estilo. Solo se listan páginas que se revisaron. ===== -->
+     esos enlaces. El CSS (.src) le da el estilo. ===== -->
 <section id="fuentes">
   <h2><span class="mono">04</span> Fuentes consultadas</h2>
   <p class="intro">Páginas de referencia en las que se apoyan varias recomendaciones de este manual. Consultadas el 13 de noviembre de 2026.</p>
@@ -117,6 +116,6 @@
   </ol>
 </section>
 </main>
-<footer><span class="mono">Sistemas Operativos</span> · Autor: Julián Díaz</footer>
+<footer><span class="mono" span> · Creador: Julián Díaz</footer>
 </body>
 </html>
