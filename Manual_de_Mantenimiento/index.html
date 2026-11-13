@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<!--
+  index.html - ESTRUCTURA de la página (los textos que no cambian).
+  Se conecta con los otros dos archivos así:
+    css/styles.css -> <link rel="stylesheet"> (en el <head>): da el aspecto.
+    js/app.js      -> <script src defer> (en el <head>): dibuja los pasos y fallas.
+  El HTML y el CSS se conectan por las CLASES (class="card", class="bar"...).
+  El HTML y el JS se conectan por los IDs (id="pre", id="fix"...) y por los
+  atributos data-* de los botones.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plano de mantenimiento de un computador</title>
+<!-- Tipografías (Archivo y Space Mono) descargadas de Google Fonts; usadas en styles.css -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Enlace a la hoja de estilos: sin esta línea la página saldría sin diseño -->
+<link rel="stylesheet" href="css/styles.css">
+<!-- Enlace a la lógica. "defer" = se ejecuta cuando el HTML ya cargó, así los
+     id (pre, fix, syms, count) ya existen cuando el JS los busca -->
+<script src="js/app.js" defer></script>
+</head>
+<body>
+<!-- ===== PORTADA: título, dibujo y cajetín (los cajetines son los recuadros con datos que llevan los planos técnicos) ===== -->
+<header class="hero" id="inicio">
+  <div class="hero-main">
+    <div>
+      <h1>Mantenimiento preventivo y correctivo de un <em>computador</em></h1>
+      <p class="sub">Un manual dibujado como plano técnico: sigue la ruta, marca cada paso y encuentra la solución a la falla de tu PC de escritorio o laptop.</p>
+      <a class="btn" href="#conceptos">Abrir el plano</a>
+    </div>
+    <!-- Dibujo en SVG (gráfico vectorial escrito con código, no es una imagen aparte).
+         <rect> = rectángulo, <circle> = círculo, <path> = líneas, <text> = texto.
+         Los colores 9CC3FF (azul claro) y FFD84D (amarillo) son los del plano. -->
+    <svg viewBox="0 0 400 260" role="img" aria-label="Dibujo técnico de una PC de escritorio, un monitor y una laptop">
+      <g fill="none" stroke="#9CC3FF" stroke-width="2">
+        <rect x="20" y="30" width="90" height="200" rx="3"/><rect x="34" y="46" width="62" height="12"/><circle cx="65" cy="196" r="9"/><path d="M34 80h62M34 92h62M34 104h62"/>
+        <rect x="140" y="30" width="150" height="100" rx="3"/><path d="M215 130v16M190 146h50"/>
+        <rect x="250" y="160" width="110" height="66" rx="3"/><path d="M235 226h140l-10 14H245z"/>
+      </g>
+      <g stroke="#FFD84D" stroke-width="1.5" stroke-dasharray="5 4" fill="none"><path d="M10 30v200M5 30h10M5 230h10"/></g>
+      <text x="125" y="250" fill="#FFD84D" font-family="Space Mono,monospace" font-size="12">80 °C máx.</text>
+    </svg>
+  </div>
+  <dl class="cajetin">
+    <div><dt>Materia</dt><dd>Sistemas Operativos</dd></div>
+    <div><dt>Autor</dt><dd>Julián Díaz</dd></div>
+    <div><dt>Documento</dt><dd>Manual para PC y laptop</dd></div>
+  </dl>
+</header>
+
+<!-- ===== BARRA DE NAVEGACIÓN (queda fija arriba al bajar: position:sticky en el CSS) =====
+     Los enlaces href="#conceptos" saltan a la sección con ese id.
+     Los dos botones de .tog tienen data-dev="pc" / "lap": el JS los lee al hacer clic
+     para saber qué equipo mostrar. aria-pressed="true" marca el activo (el CSS lo pinta amarillo). -->
+<nav class="bar" aria-label="Navegación">
+  <div class="links"><a href="#conceptos">Conceptos</a><a href="#preventivo">Preventivo</a><a href="#correctivo">Correctivo</a><a href="#cuando">Calendario</a><a href="#fuentes">Fuentes</a></div>
+  <div class="tog" role="group" aria-label="Equipo"><button data-dev="pc" aria-pressed="true">PC de escritorio</button><button data-dev="lap" aria-pressed="false">Laptop</button></div>
+</nav>
+
+<main>
+<!-- ===== SECCIÓN 00: contenido FIJO escrito directamente en el HTML (no lo toca el JS).
+     .grid acomoda las 4 tarjetas (.card) en 2 columnas. ===== -->
+<section id="conceptos">
+  <h2><span class="mono">00</span> Antes de empezar</h2>
+  <div class="grid">
+    <div class="card"><h4>Preventivo</h4><p>Cuidados que se repiten con regularidad para que el equipo no falle. <b>Ejemplo:</b> limpiar el polvo de los ventiladores cada 3 meses.</p></div>
+    <div class="card"><h4>Correctivo</h4><p>Reparación que se hace cuando ya apareció la falla. <b>Ejemplo:</b> cambiar un ventilador que dejó de girar.</p></div>
+    <div class="card"><h4>Herramientas</h4><ul><li>Destornillador Phillips y uno de precisión</li><li>Aire comprimido y brocha antiestática</li><li>Alcohol isopropílico al 70 % y paño de microfibra</li><li>Hisopos, palitos de madera y linterna</li></ul></div>
+    <div class="card"><h4>Seguridad</h4><ul><li>Apaga y desconecta antes de abrir o limpiar.</li><li>Toca metal del gabinete para descargar la estática.</li><li>El líquido va al paño, nunca al equipo.</li><li>Nada de aspiradoras ni secadores de pelo.</li></ul></div>
+  </div>
+</section>
+
+<!-- ===== SECCIÓN 01: contenido DINÁMICO. Aquí el HTML solo deja los "huecos":
+     <p id="count"> y <ol id="pre"> están vacíos y app.js (renderPre) los llena. ===== -->
+<section id="preventivo">
+  <h2><span class="mono">01</span> Ruta de mantenimiento preventivo</h2>
+  <p class="intro">Sigue los nodos en orden. Cuando termines un paso, toca su círculo para marcarlo.</p>
+  <p class="mono count" id="count" aria-live="polite"></p>
+  <ol class="trace" id="pre"></ol>
+</section>
+
+<!-- ===== SECCIÓN 02: también dinámica. app.js (renderCor) llena <div id="syms">
+     con los botones de fallas y <article id="fix"> con la solución elegida.
+     aria-live="polite" avisa a los lectores de pantalla cuando el contenido cambia. ===== -->
+<section id="correctivo">
+  <h2><span class="mono">02</span> Diagnóstico de fallas</h2>
+  <p class="intro">Elige lo que le pasa a tu equipo y verás por qué ocurre y cómo arreglarlo.</p>
+  <div class="diag"><div class="syms" id="syms"></div><article class="card fix" id="fix" aria-live="polite"></article></div>
+</section>
+
+<!-- ===== SECCIÓN 03: calendario. Contenido fijo; el CSS (.route) lo muestra
+     en 5 columnas, y en celular en 2 o en 1 ===== -->
+<section id="cuando">
+  <h2><span class="mono">03</span> Calendario de mantenimiento</h2>
+  <ol class="route">
+    <li><b>Cada semana</b>Actualizar, pasar el antivirus y borrar temporales.</li>
+    <li><b>Cada mes</b>Limpieza exterior y copia de seguridad.</li>
+    <li><b>3 a 6 meses</b>Quitar el polvo: dentro de la PC o por las rejillas de la laptop.</li>
+    <li><b>1 a 2 años</b>Laptop: limpiar el ventilador y renovar la pasta térmica.</li>
+    <li><b>2 a 3 años</b>PC: renovar la pasta térmica del procesador.</li>
+  </ol>
+</section>
+<!-- ===== SECCIÓN 04: fuentes. Contenido fijo (el JS no la toca). Cada fuente es un enlace <a>;
+     target="_blank" lo abre en otra pestaña y rel="noopener" es una medida de seguridad para
+     esos enlaces. El CSS (.src) le da el estilo. Solo se listan páginas que se revisaron. ===== -->
+<section id="fuentes">
+  <h2><span class="mono">04</span> Fuentes consultadas</h2>
+  <p class="intro">Páginas de referencia en las que se apoyan varias recomendaciones de este manual. Consultadas el 13 de noviembre de 2026.</p>
+  <ol class="src">
+    <li><a href="https://www.dell.com/support/kbdoc/en-us/000124077" target="_blank" rel="noopener">Dell Technologies. <em>How to Clean and Maintain Your Dell Computer.</em></a><span>Apagar y desconectar antes de limpiar, aire comprimido, paño humedecido con alcohol isopropílico al 70 % y no rociar líquido sobre el equipo.</span></li>
+    <li><a href="https://support.microsoft.com/windows/caring-for-your-battery-in-windows-2db3e37f-5e7d-488e-9086-ed15320519e4" target="_blank" rel="noopener">Microsoft Support. <em>Caring for your battery in Windows.</em></a><span>Evitar el calor, mantener la carga entre 20 % y 80 % y generar el informe de batería con <code>powercfg /batteryreport</code>.</span></li>
+    <li><a href="https://batteryuniversity.com/article/bu-808-how-to-prolong-lithium-based-batteries" target="_blank" rel="noopener">Battery University. <em>BU-808: How to Prolong Lithium-based Batteries.</em></a><span>El calor reduce de forma permanente la capacidad de las baterías de litio, y las cargas y descargas parciales las hacen durar más.</span></li>
+    <li><a href="https://support.microsoft.com/kb/929833" target="_blank" rel="noopener">Microsoft Support. <em>Use the System File Checker tool to repair missing or corrupted system files.</em></a><span>Uso de <code>sfc /scannow</code> desde el Símbolo del sistema como administrador.</span></li>
+  </ol>
+</section>
+</main>
+<footer><span class="mono">Sistemas Operativos</span> · Autor: Julián Díaz</footer>
+</body>
+</html>
