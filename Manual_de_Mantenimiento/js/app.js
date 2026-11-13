@@ -1,179 +1,183 @@
 /* =====================================================================
-   app.js - DATOS y LÓGICA de la página
+   app.js — aquí viven los datos y la lógica de la página
 
-   CÓMO SE CONECTA CON LOS OTROS ARCHIVOS:
-   - index.html lo carga con <script src="js/app.js" defer>. "defer" hace que
-     el navegador lo ejecute cuando el HTML ya está listo.
-   - Este archivo NO trae los pasos escritos en el HTML: los guarda aquí
-     (variable D) y los dibuja dentro de elementos del HTML que tienen un id:
-       id="count" -> contador de pasos completados
-       id="pre"   -> lista de pasos preventivos
-       id="syms"  -> botones de síntomas (fallas)
-       id="fix"   -> tarjeta con la solución de la falla elegida
-   - Las clases CSS que escribe aquí (card, how, tip, dot, sym) están
-     definidas en css/styles.css, por eso lo dibujado ya sale con estilo.
+   Cómo se conecta con los otros dos archivos:
+   - index.html carga este archivo con <script src="js/app.js" defer>.
+     El "defer" hace que se ejecute cuando el HTML ya está listo, así los
+     lugares que busco aquí (los id) ya existen.
+   - Los pasos y las fallas NO están escritos en el HTML. Los guardo aquí,
+     en la variable D, y los dibujo dentro de cuatro "huecos" que el HTML
+     deja vacíos y que se reconocen por su id:
+       id="count" -> el contador de pasos hechos
+       id="pre"   -> la ruta de pasos preventivos
+       id="syms"  -> los botones con los síntomas
+       id="fix"   -> la tarjeta con la solución del síntoma elegido
+   - Las clases que uso al dibujar (card, how, tip, dot, sym) están
+     definidas en css/styles.css. Por eso lo que dibujo ya sale con estilo.
    ===================================================================== */
 
-/* ---------- 1. DATOS ----------
-   D es un objeto con 4 listas (arreglos). El nombre se arma con
-   dispositivo + tipo, por eso luego se puede pedir D[st.dev+"Pre"]:
-     pcPre  = PC de escritorio, mantenimiento PREventivo
-     pcCor  = PC de escritorio, mantenimiento CORrectivo (fallas)
-     lapPre = Laptop, preventivo
-     lapCor = Laptop, correctivo
-   Abreviaturas usadas en cada elemento de las listas Pre (pasos):
+/* ---------- 1. LOS DATOS ----------
+   D es como un libro con cuatro capítulos. Cada capítulo es una lista y su
+   nombre se arma con equipo + tipo (por eso, más abajo, D[st.dev+"Pre"]
+   da D.pcPre o D.lapPre según el equipo que elijas):
+     pcPre  = PC de escritorio, pasos preventivos
+     pcCor  = PC de escritorio, fallas (correctivo)
+     lapPre = Laptop, pasos preventivos
+     lapCor = Laptop, fallas (correctivo)
+
+   Para no escribir tanto, las claves son cortas. En los pasos preventivos:
      t   = título del paso
-     d   = descripción corta (por qué se hace)
-     h   = "how": arreglo con los pasos de "Cómo hacerlo"
-     tip = consejo extra (OPCIONAL: hay pasos que no lo tienen)
-   Abreviaturas usadas en cada elemento de las listas Cor (fallas):
-     p = problema (texto del botón y título)
-     s = síntoma ("Lo que notas")
-     c = causa ("Por qué pasa")
-     f = fix: arreglo con los pasos de "Cómo solucionarlo"
-   Para agregar un paso o una falla nueva basta copiar un bloque { ... }
-   dentro de la lista correcta, separado por coma; la página lo muestra sola. */
+     d   = descripción: el "por qué" del paso
+     h   = "how": la lista de "Cómo hacerlo"
+     tip = consejo extra (opcional: no todos los pasos tienen uno)
+   En las fallas:
+     p = problema (lo que dice el botón)
+     s = síntoma: lo que notas
+     c = causa probable: qué puede estar pasando
+     f = fix: los pasos para comprobarlo y arreglarlo
+     x = "por dentro": qué ocurre en el sistema o en el hardware (opcional)
+
+   ¿Quieres agregar un paso o una falla? Copia un bloque { ... } dentro de
+   la lista que corresponda, ponle una coma y listo: la página lo muestra
+   sola, sin tocar nada más. */
 var D={
-/* PC de escritorio: pasos preventivos */
+/* PC de escritorio: los pasos de mantenimiento preventivo */
 pcPre:[
-{t:"Apaga y desconecta el equipo",d:"Nunca limpies ni abras un computador encendido: hay riesgo de descarga y de dañar piezas.",h:["Guarda tus archivos y ve a Inicio > Apagar.","Apaga el interruptor de la fuente de poder (atrás del gabinete) y saca el cable de corriente.","Presiona el botón de encendido 5 segundos para descargar la electricidad que queda."]},
-{t:"Limpia por fuera",d:"El polvo y la grasa de las manos se acumulan en el gabinete, el teclado y el mouse.",h:["Humedece un poco un paño de microfibra con alcohol isopropílico al 70 % y pásalo por el gabinete, el teclado y el mouse.","Limpia la pantalla solo con un paño seco de microfibra, con movimientos suaves en una sola dirección.","Para el teclado: voltéalo y sacúdelo con suavidad, y limpia entre las teclas con un hisopo."],tip:"Nunca rocíes el líquido directo sobre la pantalla ni sobre el equipo."},
-{t:"Limpia por dentro",d:"El polvo interno tapa los ventiladores y hace que el equipo se caliente.",h:["Quita los tornillos de la tapa lateral con el destornillador Phillips y deslízala.","Sujeta cada ventilador con un palito para que no gire y sopla aire en ráfagas cortas (o pasa la brocha antiestática).","Sopla de arriba hacia abajo y, de ser posible, al aire libre para que el polvo no vuelva a entrar.","Ejemplo: el polvo se junta más en la rejilla frontal y en el disipador del procesador."],tip:"Antes de tocar cualquier pieza, toca una parte metálica del gabinete para descargar la estática."},
-{t:"Revisa ventiladores y pasta térmica",d:"Si el procesador se calienta demasiado, el equipo se vuelve lento o se apaga solo.",h:["Enciende la PC con la tapa abierta y comprueba que todos los ventiladores giran.","Si uno hace ruido o no gira, cámbialo por otro de las mismas medidas.","Cada 2 o 3 años cambia la pasta térmica: retira el disipador, limpia el procesador con alcohol, pon una gota del tamaño de un grano de arroz y vuelve a colocar el disipador."]},
-{t:"Revisa conexiones y memoria RAM",d:"Un cable flojo o una RAM mal puesta causan fallas que parecen graves.",h:["Verifica que los cables de la fuente, de datos (SATA) y del panel frontal estén firmes.","Saca la memoria RAM presionando las pestañas laterales y limpia los contactos dorados con una goma de borrar blanca.","Colócala de nuevo y presiona hasta oír un clic."]},
-{t:"Actualiza y protege el sistema",d:"Las actualizaciones corrigen errores y cierran huecos de seguridad.",h:["Ve a Inicio > Configuración > Windows Update > Buscar actualizaciones.","Abre Seguridad de Windows > Protección antivirus > Análisis completo.","Ejemplo: programa esto un día fijo de la semana, como el domingo."]},
-{t:"Libera espacio y haz un respaldo",d:"Un disco casi lleno vuelve lento al sistema operativo, y un fallo del disco puede borrar todo.",h:["Escribe Liberador de espacio en disco en el buscador de Windows y borra los archivos temporales.","En Configuración > Aplicaciones desinstala los programas que no uses.","Copia tus archivos importantes a un disco externo o a la nube (Google Drive, OneDrive).","Si tienes disco duro mecánico (HDD), usa la herramienta Optimizar unidades. En un SSD no hace falta."]}
+{t:"Apaga, desconecta y descarga la estática",d:"Es el paso que más importa y el que más gente se salta. La fuente de poder guarda carga en sus condensadores aunque el equipo esté apagado.",h:["Guarda tu trabajo y apaga desde Inicio > Apagar.","Pasa el interruptor de la fuente a 0 y desconecta el cable de la pared.","Mantén presionado el botón de encendido unos 5 segundos: así se gasta la energía que queda en el circuito.","Antes de tocar cualquier pieza, apoya la mano en una parte metálica del gabinete para igualar tu carga eléctrica con la del equipo."],tip:"Haz fotos con el celular de cómo están los cables antes de mover nada. Cuando toque volver a conectar, te lo vas a agradecer."},
+{t:"Conoce a tu equipo cuando está sano (línea base)",d:"Para notar que algo anda mal tienes que saber qué es lo normal. Son cinco minutos y te sirven durante años.",h:["Presiona Ctrl + Shift + Esc para abrir el Administrador de tareas y entra a la pestaña Rendimiento.","Con el equipo en reposo, anota el uso de CPU, la memoria en uso y el tiempo activo del disco.","Mira el valor Confirmada de la memoria: si se acerca al total, Windows ya está usando el disco como memoria de emergencia.","Entra a Inicio (en Windows 11, Aplicaciones de arranque) y mira cuántos programas arrancan contigo y qué impacto tienen."],tip:"Guarda una captura de pantalla. El día que el equipo esté lento, compáralo con ella."},
+{t:"Limpia por fuera y despeja las entradas de aire",d:"Una PC respira por el frente y por las rejillas. Si están tapadas, todo lo que hay dentro sufre.",h:["Humedece (sin empapar) un paño de microfibra con alcohol isopropílico al 70 % y pásalo por el gabinete, el teclado y el mouse.","Limpia la pantalla solo con un paño seco de microfibra, siempre en el mismo sentido.","Deja unos centímetros libres delante y detrás del gabinete, y no lo encierres en un mueble sin ventilación.","Si el gabinete tiene filtros de polvo, sácalos y límpialos."],tip:"El líquido va al paño, nunca directo al equipo."},
+{t:"Limpia el interior siguiendo el camino del aire",d:"Dentro del gabinete el aire entra por el frente, atraviesa los componentes y sale por atrás o por arriba. El polvo se acumula donde el aire se frena.",h:["Quita los tornillos de la tapa lateral con el destornillador Phillips y guárdalos en un recipiente.","Sujeta cada ventilador con un palito, para que no gire de golpe, y sopla aire comprimido en ráfagas cortas.","Limpia en el orden del flujo: rejilla o filtro frontal, disipador del procesador, tarjeta de video, fuente y salida trasera.","No uses aspiradora: genera estática. Si puedes, hazlo al aire libre."],tip:"Con el aire comprimido, mantén la lata derecha: inclinada puede soltar líquido helado sobre la placa."},
+{t:"Revisa ventiladores, temperaturas y pasta térmica",d:"Cuando el procesador se calienta, se protege bajando su propia velocidad. Si tu PC se siente lenta “sin razón”, a veces es eso.",h:["Con la tapa abierta, enciende el equipo y comprueba que todos los ventiladores giran sin ruidos raros.","Si alguno está parado o hace ruido, cámbialo por otro de las mismas medidas y el mismo tipo de conector.","Mide la temperatura en reposo y bajo carga con un programa gratuito como HWMonitor y compárala con el máximo que publica el fabricante de tu procesador.","Renueva la pasta térmica solo si las temperaturas suben sin otra causa o si el disipador ya tiene muchos años: retíralo, limpia ambas superficies con alcohol, aplica una cantidad pequeña en el centro del procesador y vuelve a montarlo."],tip:"Más pasta no es mejor: el exceso se desborda y ensucia el socket."},
+{t:"Reasienta la RAM y comprueba la memoria",d:"Una memoria mal asentada produce fallas que parecen graves. Primero revisamos el contacto físico y luego la memoria con una herramienta del propio sistema.",h:["Verifica que los cables de la fuente, los de datos (SATA) y los del panel frontal estén firmes.","Retira cada módulo de RAM abriendo las pestañas laterales, limpia los contactos dorados con una goma de borrar blanca y colócalo de nuevo hasta oír un clic.","Con Windows abierto, presiona Windows + R, escribe mdsched y elige reiniciar y comprobar: la herramienta prueba la memoria durante el arranque.","El resultado aparece al iniciar sesión. Si no lo ves, abre el Visor de eventos y busca el registro MemoryDiagnostics-Results."]},
+{t:"Revisa la salud del disco y haz tu respaldo 3-2-1",d:"Un disco suele dar señales antes de morir, pero solo si lo miras. Y un respaldo en el mismo disco no es un respaldo.",h:["Abre PowerShell como administrador y escribe: Get-PhysicalDisk | Select-Object FriendlyName, HealthStatus. Lo esperado es Healthy.","Para ver los atributos S.M.A.R.T. con detalle (por ejemplo, los sectores reasignados), usa un programa gratuito como CrystalDiskInfo.","Desde un Símbolo del sistema como administrador, ejecuta chkdsk C: /scan para revisar el sistema de archivos sin reiniciar.","Aplica la regla 3-2-1: tres copias de tus datos, en dos tipos de medios distintos y una de ellas fuera de casa (por ejemplo, disco externo y nube).","Si tu disco es mecánico (HDD), usa Optimizar unidades. Si es SSD, Windows ya se encarga solo."]},
+{t:"Mantén al día el sistema, los controladores y el arranque",d:"El sistema operativo es la capa que le habla a todo el hardware. Si se descuida, hasta el mejor equipo se porta mal.",h:["Entra a Configuración > Windows Update y busca actualizaciones. Revisa también las opcionales: ahí Windows deja controladores nuevos.","Si no aparece un controlador reciente, búscalo en la página del fabricante, sobre todo el de video y el del chipset.","Abre Seguridad de Windows y haz un Análisis completo.","Antes de un cambio grande (un controlador, una actualización mayor), crea un punto de restauración desde Protección del sistema.","En Inicio desactiva los programas que no necesites al arrancar."],tip:"Elige un día fijo para esto, por ejemplo el domingo por la noche."}
 ],
-/* PC de escritorio: fallas y soluciones */
+/* PC de escritorio: las fallas y cómo resolverlas */
 pcCor:[
-{p:"La PC no enciende",s:"No se ve ninguna luz y no suena nada.",c:"Cable suelto, regleta apagada o fuente de poder dañada.",f:["Prueba el tomacorriente con otro aparato, como una lámpara.","Revisa que el cable de poder esté bien conectado y el interruptor de la fuente esté en 1.","Si nada cambia, prueba con otra fuente de poder: si enciende, la anterior estaba dañada."]},
-{p:"Enciende pero no hay imagen",s:"Los ventiladores giran pero la pantalla sigue negra.",c:"Cable de video flojo, monitor en otra entrada o RAM mal colocada.",f:["Reconecta el cable de video (HDMI, VGA o DisplayPort) y elige la entrada correcta en el monitor.","Si tienes tarjeta de video, conecta el cable en ella y no en la placa madre.","Saca y vuelve a colocar la RAM hasta oír el clic."]},
-{p:"Pitidos al encender",s:"Suenan pitidos repetidos y no arranca.",c:"La placa madre avisa un fallo, casi siempre de RAM o video.",f:["Cuenta los pitidos y búscalos en el manual de tu placa madre (un pitido corto suele ser normal).","Vuelve a colocar la RAM y la tarjeta de video.","Prueba las memorias de a una para encontrar la dañada."]},
-{p:"Se apaga sola o se calienta",s:"Se reinicia o se apaga cuando haces algo exigente.",c:"Polvo, ventilador dañado o pasta térmica seca.",f:["Haz la limpieza interna y revisa que giren todos los ventiladores.","Cambia la pasta térmica del procesador.","Mide la temperatura con un programa gratuito como HWMonitor: sobre 80 °C en uso normal es señal de problema."]},
-{p:"Está muy lenta",s:"Tarda mucho en iniciar y en abrir programas.",c:"Disco lleno, virus o demasiados programas al iniciar.",f:["Presiona Ctrl + Shift + Esc, abre la pestaña Inicio y deshabilita los programas que no necesitas.","Haz un análisis completo con el antivirus y libera espacio en disco.","Si usas disco duro mecánico, cambiarlo por un SSD es la mejora más notable."]},
-{p:"Windows no inicia o sale pantalla azul",s:"Aparece un mensaje de error azul o se reinicia en bucle.",c:"Archivos del sistema dañados, controlador defectuoso o falla del disco.",f:["Reinicia y mantén presionada la tecla Shift al elegir Reiniciar para entrar a Solucionar problemas > Opciones avanzadas > Reparación de inicio.","Si empezó tras una actualización, desinstálala desde Opciones avanzadas > Desinstalar actualizaciones.","Con Windows funcionando, abre el Símbolo del sistema como administrador y escribe sfc /scannow para reparar archivos.","Si nada funciona, respalda tus archivos y reinstala Windows."]}
+{p:"No enciende",s:"Presionas el botón y no pasa nada: ni luces, ni ruido, ni un solo ventilador.",c:"La energía se pierde en algún punto de la cadena: tomacorriente, regleta, cable, fuente, botón de encendido o placa madre.",f:["Empieza por afuera: conecta una lámpara en el mismo tomacorriente y prueba con otra regleta, o sin regleta.","Revisa el cable de poder y que el interruptor de la fuente esté en 1 y no en 0.","Desconecta todo lo que no sea indispensable (USB, discos extra, tarjetas) y prueba solo con placa, procesador, una RAM y la fuente.","Si sigue igual, prueba con otra fuente que sepas que funciona. Si con esa enciende, el problema era la fuente."],x:"La fuente convierte la corriente alterna de la pared en voltajes bajos (12 V, 5 V y 3,3 V). Si no entrega esos voltajes, la placa ni siquiera empieza a arrancar."},
+{p:"Enciende, pero no hay imagen",s:"Los ventiladores giran y hay luces, pero el monitor dice «sin señal» o se queda negro.",c:"Cable o entrada de video equivocados, tarjeta de video mal asentada o RAM mal colocada.",f:["Revisa que el monitor esté en la entrada correcta (HDMI, DisplayPort o VGA) y reconecta el cable por ambos lados.","Si tienes tarjeta de video dedicada, el cable va conectado a ella y no a la placa madre.","Prueba con otro cable o con otro monitor.","Retira la RAM, límpiala y colócala de nuevo. Si tienes varios módulos, prueba con uno solo."],x:"Antes de cargar Windows, el firmware de la placa hace una autoprueba llamada POST (Power-On Self-Test). Si no encuentra RAM o video funcionales, no avanza hacia el sistema operativo."},
+{p:"Suenan pitidos al arrancar",s:"Uno o varios pitidos seguidos y el equipo no inicia.",c:"El POST encontró un componente que no puede usar, casi siempre la RAM o el video.",f:["Cuenta los pitidos y anota si son cortos o largos.","Busca su significado en el manual de tu placa madre: cambia según el fabricante del BIOS (AMI, Award, Phoenix). En muchos equipos un solo pitido corto significa que todo salió bien.","Reasienta la RAM y la tarjeta de video.","Prueba los módulos de memoria de uno en uno para encontrar el dañado."],x:"El pitido es la forma de hablar del firmware cuando todavía no hay video. Muchas placas modernas traen luces de diagnóstico en lugar de bocina: mira su manual."},
+{p:"Se apaga o se reinicia sola",s:"Estás jugando, editando un video o compilando y, de pronto, todo negro. A veces ni te da tiempo de guardar.",c:"Calor excesivo, una fuente que no entrega suficiente energía bajo carga, RAM defectuosa o un controlador con errores.",f:["Abre el Visor de eventos (eventvwr.msc) > Registros de Windows > Sistema y busca el evento 41 de Kernel-Power.","Fíjate en la hora del evento: si coincide con juegos o tareas pesadas, apunta a calor o a la fuente.","Haz la limpieza interna, comprueba los ventiladores y vigila la temperatura con HWMonitor.","Si no es el calor, prueba la memoria con mdsched y verifica que la fuente tenga la potencia que piden tus componentes."],x:"El evento 41 de Kernel-Power significa que Windows encontró, al arrancar, que el apagado anterior no fue limpio. No dice por qué: es la pista de que algo cortó el equipo (calor, energía, hardware o un controlador). Y si el procesador llega a su límite de temperatura, primero baja su frecuencia (thermal throttling) y, si no basta, se apaga para protegerse."},
+{p:"Está muy lenta",s:"Tarda minutos en arrancar, los programas se quedan «pensando» y el ventilador no para.",c:"Disco casi lleno o muy exigido, poca RAM, demasiados programas al inicio, malware o un disco mecánico al límite.",f:["Abre el Administrador de tareas y ordena la pestaña Procesos por CPU, Memoria y Disco: ¿quién consume más?","Si el tiempo activo del Disco se queda cerca del 100 %, el cuello de botella es el almacenamiento. Con un disco mecánico, pasar a un SSD es el cambio más notorio.","En Rendimiento > Memoria, si casi toda la memoria está en uso, cierra programas o amplía la RAM.","Desactiva en Inicio lo que no necesites, pasa un análisis completo con Seguridad de Windows y libera espacio."],x:"Cuando la RAM se llena, Windows mueve datos al archivo de paginación (pagefile.sys), que vive en el disco. Es memoria virtual: funciona, pero es muchísimo más lenta que la RAM, y por eso todo se arrastra."},
+{p:"Pantalla azul o Windows no inicia",s:"Aparece una pantalla azul con una carita triste y un código, o el equipo se reinicia en bucle.",c:"Un controlador defectuoso, archivos del sistema dañados, memoria con errores o un disco en mal estado.",f:["Tranquilo: lo primero es anotar o fotografiar el código de detención (por ejemplo, CRITICAL_PROCESS_DIED). Es la pista más útil que tienes.","Si Windows abre, ejecuta como administrador DISM /Online /Cleanup-Image /RestoreHealth y, al terminar, sfc /scannow para reparar archivos del sistema.","Si empezó tras instalar un controlador, revierte o actualiza ese controlador desde el Administrador de dispositivos.","Si no abre y llegas a la pantalla de inicio de sesión, mantén Shift mientras pulsas Reiniciar para entrar al Entorno de recuperación > Solucionar problemas > Opciones avanzadas, y prueba Reparación de inicio, Restaurar sistema o el Modo seguro.","Si nada funciona, respalda tus archivos y reinstala Windows."],x:"Los controladores trabajan en modo kernel, el nivel de mayor privilegio del sistema. Si uno falla ahí, Windows se detiene a propósito (la pantalla azul) para no seguir corrompiendo datos."},
+{p:"Un dispositivo no funciona (USB, sonido, Wi-Fi)",s:"El sistema no reconoce el USB, el audio desapareció o la tarjeta de red ya no aparece.",c:"Controlador dañado o incompatible, puerto o cable defectuoso, o un conflicto después de una actualización.",f:["Prueba el dispositivo en otro puerto y, si puedes, en otro equipo: así sabes si falla el dispositivo o el sistema.","Abre el Administrador de dispositivos. Un triángulo amarillo indica problema: con doble clic, la pestaña General te muestra el código de error.","En la pestaña Controlador usa Revertir controlador si el fallo empezó tras una actualización, o Actualizar controlador si es más antiguo.","Como último paso, usa Desinstalar dispositivo y reinicia: Windows lo detecta de nuevo y reinstala el controlador."],x:"Un «Código 43» significa que el controlador le avisó a Windows de que el dispositivo falló, y Windows lo detuvo. Microsoft recomienda desinstalar y volver a instalar el dispositivo."}
 ],
-/* Laptop: pasos preventivos */
+/* Laptop: los pasos de mantenimiento preventivo */
 lapPre:[
-{t:"Apaga y desconecta",d:"Igual que en la PC de escritorio: nada de limpiar con el equipo encendido.",h:["Apaga desde Inicio > Apagar y desconecta el cargador.","Si la batería es removible, quítala.","Cierra la tapa solo cuando la pantalla esté apagada."]},
-{t:"Limpia pantalla y teclado",d:"El teclado acumula migas y polvo, y la pantalla se mancha con facilidad.",h:["Inclina la laptop y sopla aire comprimido entre las teclas con ráfagas cortas.","Limpia las teclas con un paño apenas humedecido con alcohol isopropílico al 70 %.","Limpia la pantalla con un paño seco de microfibra, sin presionar."],tip:"No uses productos con amoníaco ni papel de cocina en la pantalla: la rayan."},
-{t:"Limpia las rejillas de ventilación",d:"Por ahí sale el calor. Si se tapan, la laptop se sobrecalienta y se pone lenta.",h:["Ubica las rejillas (en los costados o debajo del equipo).","Sopla aire comprimido en ráfagas cortas hacia la rejilla; si puedes, sujeta el ventilador para que no gire de golpe.","Úsala sobre una superficie dura y plana: sobre la cama o un sofá se bloquean las entradas de aire."]},
-{t:"Cuida la batería",d:"La batería pierde capacidad con el calor y con las cargas extremas.",h:["Procura mantenerla entre 20 % y 80 % de carga cuando sea posible.","Evita dejarla al sol o dentro de un carro caliente.","Mira su salud: abre el Símbolo del sistema como administrador, escribe powercfg /batteryreport y abre el archivo que indica."],tip:"Algunas marcas traen una opción de “límite de carga” en su programa de configuración."},
-{t:"Actualiza y protege el sistema",d:"Mantiene el equipo seguro y estable.",h:["Ve a Inicio > Configuración > Windows Update > Buscar actualizaciones.","Haz un Análisis completo en Seguridad de Windows.","Actualiza también los controladores desde la página del fabricante de tu laptop."]},
-{t:"Libera espacio y haz un respaldo",d:"Evita que el disco se llene y que pierdas tus archivos.",h:["Usa el Liberador de espacio en disco para borrar temporales.","Desinstala programas que no uses en Configuración > Aplicaciones.","Copia tus archivos importantes a un disco externo o a la nube."]},
-{t:"Haz una limpieza interna cada 1 o 2 años",d:"Es la limpieza más profunda y la que más baja la temperatura.",h:["Apaga, desconecta y quita los tornillos de la tapa inferior con el destornillador de precisión; guárdalos en orden.","Desconecta la batería interna si la tiene, limpia el ventilador y el disipador con brocha y aire.","Cambia la pasta térmica y cierra la tapa.","Si es tu primera vez o la laptop está en garantía, pide ayuda a un técnico."],tip:"Busca en video el desarme de tu modelo exacto antes de empezar."}
+{t:"Apaga, desconecta y respeta la batería",d:"La batería de una laptop es de litio: no es peligrosa si la tratas bien, pero no se limpia ni se abre con el equipo conectado.",h:["Apaga desde Inicio > Apagar y desconecta el cargador.","Si la batería es extraíble, quítala.","Cierra la tapa solo cuando la pantalla ya esté apagada, para que no se quede encendida dentro de una mochila."],tip:"Si ves la batería hinchada o la base deformada, deja de usarla y llévala a un técnico."},
+{t:"Conoce el estado de tu batería (línea base)",d:"La batería envejece aunque la cuides. Medirla te dice cuánta vida le queda.",h:["Abre el Símbolo del sistema como administrador y escribe powercfg /batteryreport; abre el archivo HTML que te indica.","En la sección de la batería instalada compara la capacidad de diseño con la capacidad de carga completa: si la segunda es mucho menor, la batería ya perdió parte de su vida.","Mira también el historial de uso para ver cuánto te dura en la vida real.","Anota ambos valores y repite la medición cada pocos meses."],tip:"Perder algo de capacidad con los años es normal. Lo que importa es la tendencia."},
+{t:"Limpia teclado y pantalla",d:"Es lo que más ves y lo que más se ensucia: migas, grasa de los dedos y polvo.",h:["Inclina la laptop y aplica aire comprimido entre las teclas en ráfagas cortas.","Pasa por las teclas un paño apenas humedecido con alcohol isopropílico al 70 %.","Limpia la pantalla con un paño de microfibra seco, sin presionar."],tip:"Nada de amoníaco ni papel de cocina en la pantalla: la rayan."},
+{t:"Despeja las rejillas y elige bien dónde la usas",d:"La laptop expulsa el calor por muy pocas rejillas. Si se tapan, se calienta y se frena sola.",h:["Ubica las rejillas (a los lados o debajo) y sopla aire comprimido en ráfagas cortas, sujetando el ventilador para que no gire de golpe.","Úsala sobre una superficie dura y plana: en la cama o en el sofá se bloquea la entrada de aire.","Si la exiges mucho (juegos, edición de video), una base con ventiladores ayuda.","Si el calor persiste, baja el Estado máximo del procesador en Opciones de energía > Cambiar la configuración del plan > Configuración avanzada > Administración de energía del procesador. Pierdes algo de rendimiento, pero baja la temperatura."]},
+{t:"Cuida la batería con hábitos, no con manías",d:"El calor y las cargas extremas la desgastan más que el uso diario.",h:["Procura mantener la carga entre el 20 % y el 80 % cuando sea posible.","No la dejes al sol ni dentro de un carro caliente: el calor causa una pérdida permanente de capacidad.","Si tu laptop trae carga inteligente o límite de carga (en Windows o en el programa del fabricante), actívalo cuando casi siempre la uses enchufada."],tip:"Si trabajas siempre conectada, activar el límite de carga está bien: la batería pasa menos tiempo al 100 %."},
+{t:"Revisa el disco y haz tu respaldo 3-2-1",d:"Tu laptop se mueve, se golpea y se calienta. Tus archivos merecen estar en más de un lugar.",h:["Abre PowerShell como administrador y ejecuta: Get-PhysicalDisk | Select-Object FriendlyName, HealthStatus. Lo esperado es Healthy.","Usa el Liberador de espacio en disco y desinstala en Configuración > Aplicaciones lo que ya no uses.","Aplica la regla 3-2-1: tres copias, en dos tipos de medios distintos y una fuera de casa.","Si tu laptop tiene disco mecánico, es más frágil a los golpes que un SSD: muévela apagada o en suspensión."]},
+{t:"Actualiza sistema, controladores y firmware con cuidado",d:"En una laptop, el fabricante prepara controladores propios de energía y de gráficos. Conviene usar los de tu modelo.",h:["Entra a Configuración > Windows Update y busca actualizaciones, incluidas las opcionales.","Descarga los controladores de tu modelo exacto desde la página del fabricante, en especial los de video y los de energía.","Si decides actualizar el BIOS/UEFI, hazlo con el cargador conectado y sin interrumpirlo nunca: una falla a la mitad puede dejar la laptop sin arrancar.","Haz un Análisis completo en Seguridad de Windows y crea un punto de restauración antes de cambios grandes."]},
+{t:"Haz una limpieza profunda cada 1 o 2 años",d:"Es la que más baja la temperatura y también la que más calma pide.",h:["Apaga, desconecta y quita los tornillos de la tapa inferior; guárdalos en orden (dibuja un esquema o pégalos en cinta).","Desconecta primero el conector de la batería interna.","Limpia el ventilador y el disipador con brocha y aire, sin dejar que el ventilador gire libremente.","Renueva la pasta térmica solo si las temperaturas lo piden. Cierra y comprueba que todo enciende.","Si es tu primera vez o la laptop sigue en garantía, deja que lo haga un técnico."],tip:"Busca un video del desarme de tu modelo exacto antes de empezar: cada laptop es un rompecabezas distinto."}
 ],
-/* Laptop: fallas y soluciones */
+/* Laptop: las fallas y cómo resolverlas */
 lapCor:[
-{p:"No carga la batería",s:"El cargador está conectado pero el porcentaje no sube.",c:"Cargador o puerto dañado, o batería gastada.",f:["Prueba otro tomacorriente y revisa que el cable no esté roto.","Limpia el puerto de carga con un palito de madera, sin forzar.","Si la batería es removible, quítala y enciende la laptop solo con el cargador.","En Administrador de dispositivos > Baterías, desinstala la batería y reinicia para que Windows la detecte de nuevo."]},
-{p:"La batería dura muy poco",s:"Se descarga en menos de una hora.",c:"Batería desgastada o demasiados programas abiertos.",f:["Baja el brillo y activa el Ahorro de batería (Configuración > Sistema > Energía y batería).","Cierra programas en segundo plano desde el Administrador de tareas.","Revisa el informe con powercfg /batteryreport: si la capacidad actual es mucho menor que la de diseño, cambia la batería."]},
-{p:"Se calienta mucho o el ventilador suena fuerte",s:"El equipo quema al tacto y el ventilador va al máximo.",c:"Rejillas con polvo, pasta térmica seca o mala superficie.",f:["Úsala sobre una superficie dura o una base con ventiladores.","Limpia las rejillas con aire comprimido.","Haz la limpieza interna y cambia la pasta térmica."]},
-{p:"Se derramó líquido",s:"Cayó agua, café o refresco sobre el teclado.",c:"El líquido llega a la placa y causa cortocircuito.",f:["Apágala de inmediato, desconecta el cargador y quita la batería si se puede.","Ponla boca abajo, en forma de V invertida, y seca con un paño sin frotar fuerte.","Déjala secar entre 24 y 48 horas sin encenderla ni usar secador de pelo.","Si el líquido tenía azúcar, llévala a un técnico aunque parezca que funciona."]},
-{p:"La pantalla está negra",s:"La laptop enciende pero no se ve nada.",c:"Pantalla o cable dañados, brillo al mínimo o falla del sistema.",f:["Sube el brillo con las teclas de función.","Alumbra la pantalla con una linterna: si ves la imagen muy tenue, falla la luz de la pantalla.","Conéctala a un monitor externo con HDMI y presiona Windows + P.","Si en el monitor sí se ve, la falla es de la pantalla o de su cable."]},
-{p:"Está lenta o no inicia Windows",s:"Tarda mucho en arrancar o se queda en el logo.",c:"Disco lleno, virus o archivos del sistema dañados.",f:["Mantén presionado el botón de encendido 15 segundos y vuelve a encender.","Entra a Solucionar problemas > Opciones avanzadas > Reparación de inicio.","Si inicia, abre el Símbolo del sistema como administrador y escribe sfc /scannow.","Para que vuelva a ir rápida, cambia el disco duro por un SSD."]}
-]};
+{p:"No carga la batería",s:"El cargador está conectado, pero el porcentaje no sube o dice «conectada, sin cargar».",c:"Cargador o puerto dañados, límite de carga activado, batería agotada o un controlador de batería con problemas.",f:["Prueba otro tomacorriente y revisa que el cable del cargador no esté roto o doblado cerca del conector.","Comprueba si tu laptop tiene activado un límite de carga (por ejemplo, al 80 %): a veces «no carga» porque tú mismo lo configuraste.","Limpia el puerto de carga con un palito de madera, sin forzar.","En el Administrador de dispositivos > Baterías, desinstala «Batería con método de control compatible con ACPI de Microsoft» y reinicia: Windows la detectará de nuevo.","Si la batería es extraíble, prueba sin ella y solo con el cargador."],x:"Windows se comunica con la batería mediante un controlador ACPI. Si ese controlador queda en un estado raro, el sistema puede ver la batería y aun así no cargarla; reinstalarlo a veces basta."},
+{p:"La batería dura muy poco",s:"Se descarga en una hora o menos, aunque no estés haciendo nada pesado.",c:"Batería desgastada, brillo muy alto o programas que gastan energía en segundo plano.",f:["Genera el informe con powercfg /batteryreport y compara la capacidad de diseño con la de carga completa. Si la segunda es muy baja, toca cambiar la batería.","En el Administrador de tareas > Procesos, activa la columna de consumo de energía para ver qué programas gastan más.","Baja el brillo y activa el Ahorro de batería (Configuración > Sistema > Energía y batería).","Revisa Inicio y cierra los programas que no necesites."],x:"La capacidad de una batería de litio baja con los ciclos de carga y con el calor. No es un defecto del sistema: es química."},
+{p:"Se calienta mucho o el ventilador suena fuerte",s:"Quema al tocarla y el ventilador suena como una turbina.",c:"Rejillas con polvo, pasta térmica vieja, mala superficie de uso o un proceso que usa el procesador al máximo.",f:["Mira en el Administrador de tareas si algún proceso usa la CPU de forma constante; ciérralo o investígalo.","Úsala sobre una superficie dura o una base con ventiladores.","Limpia las rejillas con aire comprimido.","Si sigue igual, haz la limpieza profunda y renueva la pasta térmica."],x:"Cuando el procesador llega a su límite de temperatura reduce su frecuencia (thermal throttling). Por eso notas la laptop más lenta justo cuando más calor tiene."},
+{p:"Se derramó líquido",s:"Café, agua o refresco sobre el teclado. Pánico.",c:"El líquido llega a la placa y puede causar cortocircuitos o corrosión, incluso horas después.",f:["Respira y actúa rápido: apaga, desconecta el cargador y quita la batería si se puede.","Ponla boca abajo, abierta como una V invertida, y seca con un paño sin frotar fuerte.","Déjala secar entre 24 y 48 horas sin encenderla y sin secador de pelo.","Si el líquido tenía azúcar (refresco, café con azúcar), llévala a un técnico aunque parezca funcionar: el azúcar corroe y pega."],x:"El mayor peligro no es el agua, sino lo que lleva disuelto (azúcar, sal, ácidos): se queda sobre los circuitos y los corroe con el tiempo."},
+{p:"La pantalla está negra",s:"La laptop suena y tiene luces, pero no se ve nada.",c:"Brillo al mínimo, pantalla o cable dañados, o una falla del video o del sistema.",f:["Sube el brillo con las teclas de función.","Alumbra la pantalla con una linterna: si ves la imagen muy tenue, falla la luz de fondo (backlight).","Conéctala a un monitor externo por HDMI y presiona Windows + P para proyectar.","Si en el monitor sí se ve, la falla es de la pantalla o de su cable. Si tampoco se ve, apunta al video, la RAM o el sistema."]},
+{p:"Va lenta o Windows no inicia",s:"Tarda una eternidad en arrancar o se queda en el logo.",c:"Disco lleno o dañado, programas al inicio, malware o archivos del sistema dañados.",f:["Mantén presionado el botón de encendido unos 15 segundos y vuelve a encenderla.","Si llegas a la pantalla de inicio de sesión, mantén Shift mientras pulsas Reiniciar para entrar al Entorno de recuperación > Solucionar problemas > Opciones avanzadas, y prueba Reparación de inicio o Restaurar sistema.","Para arrancar con lo mínimo: Opciones avanzadas > Configuración de inicio > Reiniciar, y pulsa 4 o F4 para el Modo seguro.","Si inicia, ejecuta como administrador DISM /Online /Cleanup-Image /RestoreHealth y después sfc /scannow.","Cambiar un disco mecánico por un SSD es la mejora de velocidad más grande."],x:"El Modo seguro carga solo los controladores y servicios básicos. Si ahí todo anda bien, el culpable suele ser un programa o un controlador instalado después."},
+{p:"Hay Wi-Fi, pero no hay internet",s:"El icono dice «conectado», pero las páginas no cargan.",c:"La falla puede estar en una de varias capas: la señal Wi-Fi, la dirección IP que entrega el router, la resolución de nombres (DNS) o la salida del router hacia internet.",f:["Reinicia el router y la laptop (sí, en serio: arregla muchos casos).","Abre el Símbolo del sistema y escribe ping 8.8.8.8. Si responde, tienes salida a internet.","Ahora prueba ping google.com. Si el primero funciona y el segundo no, el problema es el DNS: ejecuta ipconfig /flushdns.","Si ninguno responde, escribe ipconfig /release y luego ipconfig /renew para pedirle una dirección nueva al router.","Si aún falla, usa Configuración > Red e Internet > Configuración de red avanzada > Restablecimiento de red."],x:"Probar de la capa más baja a la más alta (señal, IP, DNS) es la forma de aislar dónde se corta la comunicación. Es el mismo método de diagnóstico de la sección 00, aplicado a una red."}
+]
+};
 
-/* ---------- 2. LÓGICA DE LA PÁGINA ---------- */
+/* ---------- 2. LA LÓGICA ---------- */
 
-/* ESTADO: lo que la página "recuerda" mientras está abierta.
-   st.dev  = equipo elegido: "pc" o "lap" (el botón de la barra de navegación)
-   st.sel  = posición (0,1,2...) de la falla elegida en el diagnóstico
-   done    = pasos marcados como hechos, uno por equipo. Ejemplo:
-             done.pc = [true, false, true] -> el paso 1 y el 3 están marcados
-   El progreso de "done" se guarda en el navegador (ver más abajo, save()). */
+/* La memoria de la página: lo que necesita recordar mientras está abierta.
+   st.dev = el equipo que elegiste: "pc" o "lap"
+   st.sel = cuál síntoma está seleccionado (0 es el primero de la lista)
+   done   = los pasos que ya marcaste, aparte para cada equipo. Por ejemplo,
+            done.pc = [true, false, true] quiere decir que en la PC marcaste
+            el paso 1 y el 3.
+   done se guarda en el navegador (mira save() más abajo), así que no se
+   pierde cuando recargas. */
 var st={dev:"pc",sel:0},done={pc:[],lap:[]};
 
-/* GUARDADO DEL PROGRESO: localStorage es una memoria pequeña del navegador que
-   sobrevive aunque recargues o cierres la página (solo guarda texto, por eso se
-   usa JSON.stringify para convertir "done" a texto y JSON.parse para recuperarlo).
-   Todo va dentro de try/catch porque el navegador puede bloquear localStorage
-   (modo privado, por ejemplo); en ese caso la página sigue funcionando, solo que
-   sin recordar los pasos. */
-var KEY="plano-mantenimiento-progreso";   /* nombre con el que se guarda el dato */
+/* Guardar tu progreso. localStorage es un cajoncito del navegador donde la
+   página puede dejar datos aunque cierres la pestaña. Solo guarda texto,
+   por eso uso JSON.stringify para convertir "done" en texto al guardar, y
+   JSON.parse para volverlo lista al leer.
+   Todo va dentro de try/catch porque algunos navegadores bloquean ese
+   cajón (por ejemplo, en modo privado). Si pasa, la página sigue
+   funcionando; lo único es que no recuerda tus pasos. */
+var KEY="plano-mantenimiento-progreso";   /* con este nombre se guarda */
 function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
-/* Al abrir la página: si hay progreso guardado y tiene el formato esperado
-   (dos listas: pc y lap), se usa en lugar de las listas vacías. */
+/* Al abrir la página: si ya había progreso guardado y tiene la forma
+   esperada (dos listas, pc y lap), se usa en lugar de las listas vacías. */
 try{var g=JSON.parse(localStorage.getItem(KEY));if(g&&Array.isArray(g.pc)&&Array.isArray(g.lap))done=g}catch(e){}
 
-/* li(a): recibe un arreglo de textos y devuelve el HTML de una lista.
-   Ejemplo: li(["a","b"]) -> "<li>a</li><li>b</li>"
-   .map() recorre el arreglo, .join("") une todo en un solo texto. */
+/* li(a): le pasas una lista de textos y te devuelve esos textos como
+   elementos de lista HTML. Ejemplo: li(["a","b"]) da "<li>a</li><li>b</li>".
+   .map() recorre la lista y .join("") pega todo en un solo texto. */
 function li(a){return a.map(function(x){return"<li>"+x+"</li>"}).join("")}
 
-/* renderPre(): dibuja la RUTA PREVENTIVA (sección 01 del HTML). */
+/* renderPre(): dibuja la ruta de pasos preventivos (la sección 01 del HTML). */
 function renderPre(){
-  /* a = pasos del equipo actual (D["pc"+"Pre"] = D.pcPre)
-     d = lista de pasos marcados de ese equipo
-     n = cuántos están marcados (filter(Boolean) deja solo los true) */
+  /* a = los pasos del equipo actual (D["pc"+"Pre"] es lo mismo que D.pcPre)
+     d = cuáles de esos pasos tienes marcados
+     n = cuántos son (filter(Boolean) se queda solo con los true) */
   var a=D[st.dev+"Pre"],d=done[st.dev],n=d.filter(Boolean).length;
-  /* Escribe el contador en <p id="count"> del HTML, ej. "2 / 7 pasos completados" */
+  /* Escribe el contador en <p id="count">, por ejemplo "2 / 8 pasos completados" */
   document.getElementById("count").textContent=n+" / "+a.length+" pasos completados";
-  /* Por cada paso crea un <li> con un botón circular (.dot, con el número) y una
-     tarjeta (.card), y lo mete dentro de <ol id="pre"> con innerHTML.
-     - data-i guarda la posición del paso: así el clic sabe cuál se marcó.
-     - aria-pressed="true/false" indica si el paso está marcado; el CSS lo usa
-       para pintar el círculo de verde (.dot[aria-pressed="true"]).
-     - El tip solo se dibuja si el paso lo tiene: (s.tip ? ... : ''). */
+  /* Por cada paso armo un <li> con dos cosas: el círculo numerado (.dot) y la
+     tarjeta (.card). Todo se mete dentro de <ol id="pre"> con innerHTML.
+     - data-i guarda el número del paso, así el clic sabe cuál tocaste.
+     - aria-pressed="true/false" dice si el paso está marcado. El CSS lo
+       aprovecha para pintar el círculo de verde.
+     - El consejo (tip) solo se dibuja si el paso trae uno: (s.tip ? ... : ''). */
   document.getElementById("pre").innerHTML=a.map(function(s,i){
     return'<li><button class="dot" data-i="'+i+'" aria-pressed="'+!!d[i]+'" aria-label="Marcar el paso '+(i+1)+' como hecho">'+(i+1)+'</button><article class="card"><h4>'+s.t+'</h4><p>'+s.d+'</p><div class="how"><b>Cómo hacerlo</b><ol>'+li(s.h)+'</ol></div>'+(s.tip?'<p class="tip">Ojo: '+s.tip+'</p>':'')+'</article></li>'}).join("");
 }
 
-/* renderCor(): dibuja el DIAGNÓSTICO DE FALLAS (sección 02 del HTML). */
+/* renderCor(): dibuja el diagnóstico de fallas (la sección 02 del HTML). */
 function renderCor(){
-  /* a = fallas del equipo actual; f = la falla elegida (a[st.sel]) */
+  /* a = las fallas del equipo actual; f = la que está seleccionada (a[st.sel]) */
   var a=D[st.dev+"Cor"],f=a[st.sel];
-  /* 1) Botones de síntomas dentro de <div id="syms">. El que coincide con
-        st.sel queda con aria-pressed="true" y el CSS lo pinta de amarillo
-        (.sym[aria-pressed="true"]). data-k guarda su posición. */
+  /* 1) Los botones de síntomas, dentro de <div id="syms">. El seleccionado
+        lleva aria-pressed="true" y el CSS lo pinta de amarillo. data-k
+        guarda su posición. */
   document.getElementById("syms").innerHTML=a.map(function(x,i){return'<button class="sym" data-k="'+i+'" aria-pressed="'+(i===st.sel)+'">'+x.p+'</button>'}).join("");
-  /* 2) Tarjeta de solución dentro de <article id="fix">: título, "Lo que notas",
-        "Por qué pasa" y la lista "Cómo solucionarlo". */
-  document.getElementById("fix").innerHTML='<h4>'+f.p+'</h4><dl><dt>Lo que notas</dt><dd>'+f.s+'</dd><dt>Por qué pasa</dt><dd>'+f.c+'</dd></dl><div class="how"><b>Cómo solucionarlo</b><ol>'+li(f.f)+'</ol></div>';
+  /* 2) La tarjeta de la solución, dentro de <article id="fix">: el título,
+        "Lo que notas", "Qué puede estar pasando" y la lista "Cómo comprobarlo
+        y arreglarlo". Si la falla tiene el campo x, al final se añade el
+        recuadro "Por dentro" (solo si existe: (f.x ? ... : '')). */
+  document.getElementById("fix").innerHTML='<h4>'+f.p+'</h4><dl><dt>Lo que notas</dt><dd>'+f.s+'</dd><dt>Qué puede estar pasando</dt><dd>'+f.c+'</dd></dl><div class="how"><b>Cómo comprobarlo y arreglarlo</b><ol>'+li(f.f)+'</ol></div>'+(f.x?'<p class="tip">Por dentro: '+f.x+'</p>':'');
 }
 
-/* renderAll(): vuelve a dibujar todo. Se usa al abrir la página y al cambiar
-   de equipo (PC <-> Laptop). */
+/* renderAll(): vuelve a dibujar todo. Se llama al abrir la página y cada
+   vez que cambias de equipo (PC <-> Laptop). */
 function renderAll(){
-  /* Marca como activo el botón PC/Laptop de la barra (<button data-dev="pc"> en
-     el HTML): aria-pressed es "true" solo si su data-dev coincide con st.dev. */
+  /* Primero marca cuál botón PC/Laptop de la barra está activo: el que tenga
+     el mismo data-dev que st.dev queda con aria-pressed="true". */
   document.querySelectorAll(".tog button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.dev===st.dev)});
-  renderPre();renderCor();   /* dibuja las dos secciones dinámicas */
+  renderPre();renderCor();   /* y dibuja las dos secciones que cambian */
 }
 
-/* CLICS: un solo "oyente" para toda la página (técnica llamada delegación de
-   eventos). Como los botones se crean con JavaScript y cambian, es más fácil
-   escuchar todos los clics del documento y mirar qué elemento se tocó.
-   e.target.closest(selector) busca el elemento tocado (o uno que lo contenga)
-   que coincida con el selector; si no hay ninguno, da null y se salta ese caso. */
+/* Los clics. En vez de ponerle un oyente a cada botón, escucho todos los
+   clics de la página y miro qué tocaste. Lo hago así porque los botones se
+   vuelven a dibujar cada vez, y un oyente puesto en un botón viejo se
+   perdería (esto se llama delegación de eventos).
+   e.target.closest(selector) busca, desde lo que tocaste hacia afuera, el
+   primer elemento que coincida con el selector. Si no hay ninguno, da null
+   y esa opción se salta. */
 document.addEventListener("click",function(e){
   var t;
-  /* Caso A: botón PC/Laptop (tiene data-dev). Cambia de equipo, vuelve a la
-     primera falla (sel=0) y redibuja todo. */
+  /* Caso A: tocaste PC o Laptop (tienen data-dev). Cambio de equipo, vuelvo
+     al primer síntoma (sel=0) y redibujo todo. */
   if(t=e.target.closest("[data-dev]")){st.dev=t.dataset.dev;st.sel=0;renderAll()}
-  /* Caso B: círculo numerado de un paso (.dot). Lee su posición desde data-i
-     (el + lo convierte de texto a número) y invierte true/false en done, lo GUARDA con save() y redibuja. */
-  else if(t=e.target.closest(".dot")){var i=+t.dataset.i;done[st.dev][i]=!done[st.dev][i];save();renderPre();
-    /* renderPre() borra y vuelve a crear los botones, y con eso el teclado pierde el foco.
-       Aquí se le devuelve al mismo círculo para poder seguir con Tab y Enter. */
-    var b=document.querySelector('.dot[data-i="'+i+'"]');if(b)b.focus()}
-  /* Caso C: botón de una falla (.sym). Guarda cuál es (data-k) y redibuja
+  /* Caso B: tocaste el círculo de un paso (.dot). Leo qué número es con
+     data-i (el + lo convierte de texto a número), cambio true por false o
+     al revés, guardo con save() y redibujo la ruta. */
+  else if(t=e.target.closest(".dot")){var i=+t.dataset.i;done[st.dev][i]=!done[st.dev][i];save();renderPre()}
+  /* Caso C: tocaste un síntoma (.sym). Recuerdo cuál es (data-k) y redibujo
      solo el diagnóstico. */
-  else if(t=e.target.closest(".sym")){st.sel=+t.dataset.k;renderCor();
-    /* Igual que arriba: se devuelve el foco al botón de la falla elegida. */
-    var f=document.querySelector('.sym[data-k="'+st.sel+'"]');if(f)f.focus()}
+  else if(t=e.target.closest(".sym")){st.sel=+t.dataset.k;renderCor()}
 });
 
-/* Primera ejecución: dibuja la página al cargar (si esto faltara, las secciones
-   01 y 02 saldrían vacías). */
+/* Arranque: dibuja la página por primera vez. Sin esta línea, las
+   secciones 01 y 02 se quedarían vacías. */
 renderAll();
-
-/* ESPACIO BAJO LA BARRA FIJA: en celular la barra se parte en varias filas y mide más
-   que en computador. Esta función mide su altura real y se la da a scroll-padding-top
-   (la distancia que deja libre al saltar a una sección), así la barra nunca tapa un título.
-   Se ejecuta al cargar y cada vez que cambia el tamaño de la ventana. */
-function ajustarBarra(){
-  var b=document.querySelector(".bar");
-  if(b)document.documentElement.style.scrollPaddingTop=(b.offsetHeight+16)+"px";
-}
-ajustarBarra();
-window.addEventListener("resize",ajustarBarra);
