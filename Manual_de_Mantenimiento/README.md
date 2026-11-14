@@ -5,7 +5,7 @@ Creador: Julián Enrique Díaz Palmera.
 
 ## Estructura
 - `index.html`: estructura y textos fijos.
-- `css/styles.css`: estilo de plano técnico.
+- `css/style.css`: estilo de plano técnico.
 - `js/app.js`: datos (pasos y fallas) y lógica (botones, progreso, diagnóstico).
 
 ## Cómo verla
