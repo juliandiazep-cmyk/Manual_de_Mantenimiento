@@ -58,8 +58,8 @@ h2 .mono{color:var(--yel);font-size:.6em;border:2px solid var(--yel);padding:.1r
 /* El bloque "Cómo hacerlo" / "Cómo comprobarlo y arreglarlo" (con borde amarillo a la izquierda) y el .tip, que es el consejo */
 .how{border-left:4px solid var(--yel);padding-left:1rem;margin-top:.8rem}
 .how b{font-family:"Space Mono",monospace;color:var(--yel)}
-.how ol{margin:.3rem 0 0;padding-left:1.2rem}
-.how li{margin:.3rem 0}
+.how ol{margin:.4rem 0 0;padding-left:1.4rem}
+.how li{margin:.55rem 0;line-height:1.55}
 .tip{font:400 .92rem "Space Mono",monospace;color:var(--yel);margin:.8rem 0 0}
 
 .diag{display:grid;grid-template-columns:19rem 1fr;gap:1rem;align-items:start}
